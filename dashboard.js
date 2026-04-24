@@ -547,9 +547,12 @@ function buildPrintableReport(diagnostic, analysisData) {
   `).join("");
 
   const analysisMarkup = `
-    <section class="report-section">
+    <section class="report-section report-section-highlight">
       <h3>An\u00e1lise r\u00e1pida</h3>
-      <p>${analysisData.summary}</p>
+      <div class="report-summary-block">
+        <h4>Resumo da empresa</h4>
+        <p>${analysisData.summary}</p>
+      </div>
       <h4>Principais canais de venda</h4>
       <ul>${analysisData.channels.map((item) => `<li>${item}</li>`).join("")}</ul>
       <h4>Pontos fortes identificados</h4>
@@ -567,24 +570,53 @@ function buildPrintableReport(diagnostic, analysisData) {
     <meta charset="UTF-8">
     <title>Relat\u00f3rio - ${diagnostic.nome_empresa || "Diagn\u00f3stico"}</title>
     <style>
-      body { font-family: Arial, sans-serif; color: #18233f; margin: 32px; line-height: 1.5; }
-      h1, h2, h3, h4 { margin: 0 0 12px; }
-      h1 { font-size: 28px; }
-      h2 { font-size: 18px; color: #51607f; margin-bottom: 24px; }
-      .report-section { margin-top: 28px; page-break-inside: avoid; }
-      .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-      .report-item { border: 1px solid #d6dceb; border-radius: 10px; padding: 12px; background: #f8faff; }
-      .report-item strong { display: block; margin-bottom: 6px; font-size: 12px; text-transform: uppercase; color: #5a6784; }
-      ul { margin: 8px 0 0 18px; }
+      * { box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; color: #18233f; margin: 18px; line-height: 1.4; }
+      h1, h2, h3, h4 { margin: 0 0 8px; }
+      h1 { font-size: 24px; line-height: 1.15; }
+      h2 { font-size: 14px; color: #51607f; margin-bottom: 0; font-weight: 500; }
+      h3 { font-size: 16px; color: #24386f; }
+      h4 { font-size: 12px; color: #45526f; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 10px; }
       p { margin: 0; }
+      ul { margin: 6px 0 0 16px; padding: 0; }
+      li { margin: 0 0 4px; }
+      .report-header { margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #d9dfef; page-break-after: avoid; }
+      .report-header-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+      .report-header-item { border: 1px solid #d6dceb; border-radius: 8px; padding: 8px 10px; background: #f8faff; }
+      .report-header-item strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: #5a6784; margin-bottom: 4px; }
+      .report-section { margin-top: 14px; page-break-inside: auto; break-inside: auto; }
+      .report-section-highlight { margin-top: 0; padding: 12px; border: 1px solid #dce3f5; border-radius: 12px; background: #f7f9ff; page-break-inside: avoid; break-inside: avoid; }
+      .report-summary-block { margin-bottom: 10px; }
+      .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .report-item { border: 1px solid #d6dceb; border-radius: 8px; padding: 9px 10px; background: #f8faff; page-break-inside: avoid; break-inside: avoid; }
+      .report-item strong { display: block; margin-bottom: 4px; font-size: 10px; text-transform: uppercase; color: #5a6784; letter-spacing: 0.05em; }
       @media print {
-        body { margin: 16px; }
+        body { margin: 12px; }
+        .report-header { margin-bottom: 10px; padding-bottom: 8px; }
+        .report-section { margin-top: 10px; }
+        .report-grid { gap: 8px; }
       }
     </style>
   </head>
   <body>
-    <h1>${diagnostic.nome_empresa || "Diagn\u00f3stico"}</h1>
-    <h2>${diagnostic.nome_responsavel || "Respons\u00e1vel n\u00e3o informado"} | ${formatDate(getCreatedAt(diagnostic))}</h2>
+    <header class="report-header">
+      <h1>${diagnostic.nome_empresa || "Diagn\u00f3stico"}</h1>
+      <h2>Relat\u00f3rio de diagn\u00f3stico comercial</h2>
+      <div class="report-header-meta">
+        <div class="report-header-item">
+          <strong>Respons\u00e1vel</strong>
+          <span>${diagnostic.nome_responsavel || "N\u00e3o informado"}</span>
+        </div>
+        <div class="report-header-item">
+          <strong>Data</strong>
+          <span>${formatDate(getCreatedAt(diagnostic))}</span>
+        </div>
+        <div class="report-header-item">
+          <strong>Canais principais</strong>
+          <span>${analysisData.channels.join(", ")}</span>
+        </div>
+      </div>
+    </header>
     ${analysisMarkup}
     ${sectionsMarkup}
   </body>

@@ -2,6 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = "https://apqevpormksrrdcpdwgt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_nZRdfhGhLtsqMPMjoot4_A_2WbTcESy";
+const ANALYSIS_ENDPOINT = "/.netlify/functions/analisar-diagnostico";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -386,6 +387,94 @@ function getNormalizedArray(value) {
   return [];
 }
 
+function sanitizeText(value, fallback = "N\u00e3o informado") {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || fallback;
+  }
+
+  if (value === null || value === undefined) {
+    return fallback;
+  }
+
+  return String(value);
+}
+
+function sanitizeList(value, fallback = ["N\u00e3o informado"]) {
+  const rawItems = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+      ? [value]
+      : [];
+
+  const cleanItems = [...new Set(
+    rawItems
+      .map((item) => sanitizeText(item, ""))
+      .filter(Boolean)
+  )];
+
+  return cleanItems.length > 0 ? cleanItems : [...fallback];
+}
+
+function normalizeMaturityClass(value) {
+  const normalized = sanitizeText(value, "").toLowerCase();
+
+  if (normalized.includes("estrutur")) {
+    return "Estruturado";
+  }
+
+  if (normalized.includes("intermedi")) {
+    return "Intermedi\u00e1rio";
+  }
+
+  if (normalized.includes("baixo")) {
+    return "Baixo";
+  }
+
+  return "N\u00e3o informado";
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatPrintableText(value) {
+  return escapeHtml(value).replace(/\r?\n/g, "<br>");
+}
+
+function buildDiagnosticPayloadForAnalysis(diagnostic) {
+  const respostas = parseJsonSafe(diagnostic.respostas) || {};
+
+  return {
+    nome_empresa: diagnostic.nome_empresa || "",
+    nome_responsavel: diagnostic.nome_responsavel || "",
+    email: diagnostic.email || "",
+    telefone: diagnostic.telefone || "",
+    cidade_estado: diagnostic.cidade_estado || "",
+    rede_social: diagnostic.rede_social || "",
+    link_rede: diagnostic.link_rede || "",
+    site: diagnostic.site || "",
+    cargo: diagnostic.cargo || "",
+    equipe_vendas: diagnostic.equipe_vendas || "",
+    produtos: diagnostic.produtos || respostas.topProducts || "",
+    canais: getNormalizedArray(diagnostic.canais || respostas.salesChannels),
+    criado_em: getCreatedAt(diagnostic),
+    respostas,
+    secoes: buildStructuredSections(diagnostic).map((section) => ({
+      titulo: section.title,
+      respostas: section.rows.map((row) => ({
+        label: row.label,
+        valor: row.value
+      }))
+    }))
+  };
+}
+
 function generateAnalysisData(diagnostic) {
   const respostas = parseJsonSafe(diagnostic.respostas) || {};
   const company = diagnostic.nome_empresa || "Empresa n\u00e3o informada";
@@ -489,58 +578,361 @@ function generateAnalysisData(diagnostic) {
   };
 }
 
-function createAnalysisBlock(analysisData) {
+function inferLocalMaturity(diagnostic, localAnalysis) {
+  const respostas = parseJsonSafe(diagnostic.respostas) || {};
+  const channels = getNormalizedArray(diagnostic.canais || respostas.salesChannels);
+  let score = 0;
+  const reasons = [];
+
+  if (respostas.serviceProcess === "Sim") {
+    score += 2;
+    reasons.push("j\u00e1 existe processo definido de atendimento");
+  } else if (respostas.serviceProcess === "Parcialmente") {
+    score += 1;
+    reasons.push("o processo de atendimento est\u00e1 parcialmente definido");
+  }
+
+  if (respostas.serviceScript === "Sim") {
+    score += 2;
+    reasons.push("h\u00e1 roteiro de atendimento");
+  } else if (respostas.serviceScript === "Parcialmente") {
+    score += 1;
+    reasons.push("o roteiro de atendimento ainda est\u00e1 em desenvolvimento");
+  }
+
+  if (respostas.followUpProcess === "Sim") {
+    score += 2;
+    reasons.push("o follow-up j\u00e1 faz parte da rotina");
+  } else if (respostas.followUpProcess === "\u00c0s vezes") {
+    score += 1;
+    reasons.push("o follow-up acontece de forma irregular");
+  }
+
+  if (respostas.whatsappProcess === "Sim") {
+    score += 2;
+    reasons.push("o WhatsApp tem processo definido");
+  } else if (respostas.whatsappProcess === "Parcialmente") {
+    score += 1;
+    reasons.push("o WhatsApp est\u00e1 parcialmente organizado");
+  }
+
+  if (respostas.instagramContentPattern === "Sim") {
+    score += 1;
+    reasons.push("o Instagram possui padr\u00e3o de conte\u00fado");
+  }
+
+  if (respostas.instagramProfileClarity === "Sim") {
+    score += 1;
+    reasons.push("a comunica\u00e7\u00e3o digital est\u00e1 clara no Instagram");
+  }
+
+  if (respostas.automationUsage === "Chatbot") {
+    score += 2;
+    reasons.push("a empresa j\u00e1 usa automa\u00e7\u00e3o ativa");
+  } else if (respostas.automationUsage === "Automa\u00e7\u00e3o simples") {
+    score += 1;
+    reasons.push("h\u00e1 automa\u00e7\u00f5es simples em opera\u00e7\u00e3o");
+  }
+
+  if (channels.length >= 3) {
+    score += 1;
+    reasons.push("o neg\u00f3cio opera em mais de um canal relevante");
+  }
+
+  if (respostas.lostSalesByService === "Sim") {
+    score -= 1;
+  }
+
+  if (score >= 8) {
+    return {
+      classificacao: "Estruturado",
+      justificativa: `A classifica\u00e7\u00e3o foi definida como Estruturado porque ${sanitizeText(reasons.join(", "), "o diagn\u00f3stico mostra processos consistentes")}.`
+    };
+  }
+
+  if (score >= 4) {
+    return {
+      classificacao: "Intermedi\u00e1rio",
+      justificativa: `A classifica\u00e7\u00e3o foi definida como Intermedi\u00e1rio porque ${sanitizeText(reasons.join(", "), "h\u00e1 sinais de organiza\u00e7\u00e3o, mas ainda com lacunas relevantes")}.`
+    };
+  }
+
+  return {
+    classificacao: "Baixo",
+    justificativa: `A classifica\u00e7\u00e3o foi definida como Baixo porque ${sanitizeText(reasons.join(", "), "os processos ainda s\u00e3o pouco estruturados")} e os gargalos relatados ainda afetam atendimento, comunica\u00e7\u00e3o e convers\u00e3o.`
+  };
+}
+
+function buildActionPlan7Days(localAnalysis, diagnostic) {
+  const respostas = parseJsonSafe(diagnostic.respostas) || {};
+  const actions = [];
+
+  if (respostas.serviceScript !== "Sim") {
+    actions.push("Definir um roteiro curto para o primeiro atendimento, com apresenta\u00e7\u00e3o, qualifica\u00e7\u00e3o e pr\u00f3ximo passo.");
+  }
+
+  if (respostas.instagramProfileClarity !== "Sim") {
+    actions.push("Ajustar bio, destaques e proposta principal do Instagram para deixar claro o que a empresa vende.");
+  }
+
+  if (respostas.followUpProcess !== "Sim") {
+    actions.push("Criar uma rotina simples de follow-up para contatos sem resposta e oportunidades abertas.");
+  }
+
+  if (respostas.automationUsage === "N\u00e3o utiliza") {
+    actions.push("Implementar ao menos uma automa\u00e7\u00e3o simples para resposta inicial ou organiza\u00e7\u00e3o de leads.");
+  }
+
+  actions.push(...localAnalysis.suggestions);
+
+  return sanitizeList(actions, [
+    "Revisar o fluxo atual de atendimento e vendas para eliminar atrasos e respostas improvisadas.",
+    "Definir uma prioridade comercial para os pr\u00f3ximos 7 dias."
+  ]).slice(0, 5);
+}
+
+function buildActionPlan30Days(localAnalysis, diagnostic) {
+  const respostas = parseJsonSafe(diagnostic.respostas) || {};
+  const actions = [];
+
+  actions.push("Documentar o processo comercial completo, do primeiro contato ao fechamento.");
+  actions.push("Definir indicadores por canal para medir volume de leads, resposta, convers\u00e3o e vendas.");
+
+  if (respostas.instagramContentPattern !== "Sim") {
+    actions.push("Estruturar um calend\u00e1rio editorial com objetivos claros para cada tipo de conte\u00fado.");
+  }
+
+  if (respostas.whatsappProcess !== "Sim") {
+    actions.push("Padronizar o atendimento no WhatsApp com tempo de resposta, abordagem e materiais de apoio.");
+  }
+
+  if (respostas.serviceProcess !== "Sim") {
+    actions.push("Treinar a equipe no processo de atendimento para reduzir varia\u00e7\u00f5es entre atendentes.");
+  }
+
+  actions.push(...localAnalysis.bottlenecks.map((item) => `Tratar de forma estruturada: ${item}`));
+
+  return sanitizeList(actions, [
+    "Consolidar processos internos, canais e indicadores em uma rotina de gest\u00e3o mensal."
+  ]).slice(0, 6);
+}
+
+function buildLocalFallbackAnalysis(diagnostic) {
+  const localAnalysis = generateAnalysisData(diagnostic);
+  const maturity = inferLocalMaturity(diagnostic, localAnalysis);
+  const respostas = parseJsonSafe(diagnostic.respostas) || {};
+  const priorities = sanitizeList([
+    respostas.improvementPriority ? `Executar primeiro: ${respostas.improvementPriority}` : "",
+    ...localAnalysis.suggestions
+  ]).slice(0, 5);
+
+  return {
+    source: "local",
+    sourceLabel: "An\u00e1lise local (fallback)",
+    resumo_executivo: localAnalysis.summary,
+    nivel_maturidade_digital: maturity,
+    pontos_fortes: sanitizeList(localAnalysis.strengths),
+    gargalos: sanitizeList(localAnalysis.bottlenecks),
+    prioridades,
+    ideias_de_melhoria: sanitizeList(localAnalysis.suggestions),
+    plano_acao_7_dias: buildActionPlan7Days(localAnalysis, diagnostic),
+    plano_acao_30_dias: buildActionPlan30Days(localAnalysis, diagnostic),
+    mensagem_final_para_empresa: `A empresa tem espa\u00e7o claro para evoluir a comunica\u00e7\u00e3o, o atendimento e a opera\u00e7\u00e3o comercial. O pr\u00f3ximo ganho tende a vir da execu\u00e7\u00e3o consistente das prioridades imediatas, sem dispersar energia em muitas frentes ao mesmo tempo.`
+  };
+}
+
+function normalizeAnalysisResult(rawAnalysis, source = "ai") {
+  const maturitySource = rawAnalysis?.nivel_maturidade_digital;
+  const maturity = typeof maturitySource === "string"
+    ? {
+      classificacao: normalizeMaturityClass(maturitySource),
+      justificativa: "Justificativa n\u00e3o informada."
+    }
+    : {
+      classificacao: normalizeMaturityClass(maturitySource?.classificacao),
+      justificativa: sanitizeText(maturitySource?.justificativa)
+    };
+
+  return {
+    source,
+    sourceLabel: source === "ai" ? "An\u00e1lise por IA" : "An\u00e1lise local (fallback)",
+    resumo_executivo: sanitizeText(rawAnalysis?.resumo_executivo),
+    nivel_maturidade_digital: maturity,
+    pontos_fortes: sanitizeList(rawAnalysis?.pontos_fortes),
+    gargalos: sanitizeList(rawAnalysis?.gargalos),
+    prioridades: sanitizeList(rawAnalysis?.prioridades),
+    ideias_de_melhoria: sanitizeList(rawAnalysis?.ideias_de_melhoria),
+    plano_acao_7_dias: sanitizeList(rawAnalysis?.plano_acao_7_dias),
+    plano_acao_30_dias: sanitizeList(rawAnalysis?.plano_acao_30_dias),
+    mensagem_final_para_empresa: sanitizeText(rawAnalysis?.mensagem_final_para_empresa)
+  };
+}
+
+async function requestAIAnalysis(diagnostic) {
+  const response = await fetch(ANALYSIS_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      diagnostic: buildDiagnosticPayloadForAnalysis(diagnostic)
+    })
+  });
+
+  let payload = null;
+
+  try {
+    payload = await response.json();
+  } catch (error) {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    throw new Error(payload?.error || "N\u00e3o foi poss\u00edvel gerar a an\u00e1lise por IA.");
+  }
+
+  if (!payload?.analysis || typeof payload.analysis !== "object") {
+    throw new Error("A fun\u00e7\u00e3o retornou uma an\u00e1lise inv\u00e1lida.");
+  }
+
+  return normalizeAnalysisResult(payload.analysis, "ai");
+}
+
+function createAnalysisLoadingState(message) {
   const wrapper = document.createElement("div");
-  wrapper.className = "analysis-block";
+  wrapper.className = "analysis-block is-loading";
 
   const title = document.createElement("h4");
   title.textContent = "An\u00e1lise r\u00e1pida";
 
+  const text = document.createElement("p");
+  text.className = "analysis-summary";
+  text.textContent = message;
+
+  wrapper.append(title, text);
+  return wrapper;
+}
+
+function createAnalysisListSection(titleText, items) {
+  const block = document.createElement("div");
+  block.className = "analysis-section";
+
+  const title = document.createElement("h5");
+  title.textContent = titleText;
+
+  const list = document.createElement("ul");
+  sanitizeList(items).forEach((item) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = item;
+    list.append(listItem);
+  });
+
+  block.append(title, list);
+  return block;
+}
+
+function createAnalysisTextSection(titleText, value) {
+  const block = document.createElement("div");
+  block.className = "analysis-section";
+
+  const title = document.createElement("h5");
+  title.textContent = titleText;
+
+  const text = document.createElement("p");
+  text.className = "analysis-copy";
+  text.textContent = sanitizeText(value);
+
+  block.append(title, text);
+  return block;
+}
+
+function createAnalysisBlock(analysisData, options = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = `analysis-block ${analysisData.source === "ai" ? "is-ai" : "is-fallback"}`;
+
+  const header = document.createElement("div");
+  header.className = "analysis-header";
+
+  const title = document.createElement("h4");
+  title.textContent = "An\u00e1lise r\u00e1pida";
+
+  const badge = document.createElement("span");
+  badge.className = "analysis-badge";
+  badge.textContent = analysisData.sourceLabel;
+
+  header.append(title, badge);
+
   const summary = document.createElement("p");
   summary.className = "analysis-summary";
-  summary.textContent = analysisData.summary;
+  summary.textContent = analysisData.resumo_executivo;
 
-  const sections = [
-    ["Principais canais de venda", analysisData.channels],
-    ["Pontos fortes identificados", analysisData.strengths],
-    ["Gargalos percebidos", analysisData.bottlenecks],
-    ["Sugest\u00f5es iniciais de melhoria", analysisData.suggestions]
-  ];
+  const maturity = document.createElement("div");
+  maturity.className = "analysis-maturity";
+  maturity.innerHTML = `
+    <strong>N\u00edvel de maturidade digital</strong>
+    <span>${escapeHtml(analysisData.nivel_maturidade_digital.classificacao)}</span>
+    <p>${escapeHtml(analysisData.nivel_maturidade_digital.justificativa)}</p>
+  `;
 
-  wrapper.append(title, summary);
+  wrapper.append(header, summary, maturity);
 
-  sections.forEach(([sectionTitle, items]) => {
-    const block = document.createElement("div");
-    block.className = "analysis-section";
+  if (options.notice) {
+    const notice = document.createElement("p");
+    notice.className = "analysis-note";
+    notice.textContent = options.notice;
+    wrapper.append(notice);
+  }
 
-    const blockTitle = document.createElement("h5");
-    blockTitle.textContent = sectionTitle;
-
-    const list = document.createElement("ul");
-    items.forEach((item) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = item;
-      list.append(listItem);
-    });
-
-    block.append(blockTitle, list);
-    wrapper.append(block);
-  });
+  wrapper.append(
+    createAnalysisListSection("Pontos fortes", analysisData.pontos_fortes),
+    createAnalysisListSection("Gargalos", analysisData.gargalos),
+    createAnalysisListSection("Prioridades imediatas", analysisData.prioridades),
+    createAnalysisListSection("Ideias de melhoria", analysisData.ideias_de_melhoria),
+    createAnalysisListSection("Plano de a\u00e7\u00e3o - 7 dias", analysisData.plano_acao_7_dias),
+    createAnalysisListSection("Plano de a\u00e7\u00e3o - 30 dias", analysisData.plano_acao_30_dias),
+    createAnalysisTextSection("Mensagem final para a empresa", analysisData.mensagem_final_para_empresa)
+  );
 
   return wrapper;
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+function buildPrintableListSection(title, items) {
+  return `
+    <section class="report-analysis-group">
+      <h4>${escapeHtml(title)}</h4>
+      <ul>${sanitizeList(items).map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
+    </section>
+  `;
 }
 
-function formatPrintableText(value) {
-  return escapeHtml(value).replace(/\r?\n/g, "<br>");
+function buildPrintableAnalysisMarkup(analysisData) {
+  return `
+    <section class="report-section report-section-highlight">
+      <div class="report-analysis-head">
+        <h3>An\u00e1lise r\u00e1pida</h3>
+        <span class="report-analysis-badge">${escapeHtml(analysisData.sourceLabel)}</span>
+      </div>
+      <div class="report-summary-block">
+        <h4>Resumo executivo</h4>
+        <p>${formatPrintableText(analysisData.resumo_executivo)}</p>
+      </div>
+      <section class="report-analysis-group">
+        <h4>N\u00edvel de maturidade digital</h4>
+        <p><strong>${escapeHtml(analysisData.nivel_maturidade_digital.classificacao)}</strong></p>
+        <p>${formatPrintableText(analysisData.nivel_maturidade_digital.justificativa)}</p>
+      </section>
+      ${buildPrintableListSection("Pontos fortes", analysisData.pontos_fortes)}
+      ${buildPrintableListSection("Gargalos", analysisData.gargalos)}
+      ${buildPrintableListSection("Prioridades imediatas", analysisData.prioridades)}
+      ${buildPrintableListSection("Ideias de melhoria", analysisData.ideias_de_melhoria)}
+      ${buildPrintableListSection("Plano de a\u00e7\u00e3o - 7 dias", analysisData.plano_acao_7_dias)}
+      ${buildPrintableListSection("Plano de a\u00e7\u00e3o - 30 dias", analysisData.plano_acao_30_dias)}
+      <section class="report-analysis-group">
+        <h4>Mensagem final para a empresa</h4>
+        <p>${formatPrintableText(analysisData.mensagem_final_para_empresa)}</p>
+      </section>
+    </section>
+  `;
 }
 
 function buildPrintableReport(diagnostic, analysisData) {
@@ -559,29 +951,14 @@ function buildPrintableReport(diagnostic, analysisData) {
     </section>
   `).join("");
 
-  const analysisMarkup = `
-    <section class="report-section report-section-highlight">
-      <h3>An\u00e1lise r\u00e1pida</h3>
-      <div class="report-summary-block">
-        <h4>Resumo da empresa</h4>
-        <p>${formatPrintableText(analysisData.summary)}</p>
-      </div>
-      <h4>Principais canais de venda</h4>
-      <ul>${analysisData.channels.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
-      <h4>Pontos fortes identificados</h4>
-      <ul>${analysisData.strengths.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
-      <h4>Gargalos percebidos</h4>
-      <ul>${analysisData.bottlenecks.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
-      <h4>Sugest\u00f5es iniciais de melhoria</h4>
-      <ul>${analysisData.suggestions.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
-    </section>
-  `;
+  const channels = getNormalizedArray(diagnostic.canais || (parseJsonSafe(diagnostic.respostas) || {}).salesChannels);
+  const analysisMarkup = buildPrintableAnalysisMarkup(analysisData);
 
   return `<!DOCTYPE html>
   <html lang="pt-BR">
   <head>
     <meta charset="UTF-8">
-    <title>Relat\u00f3rio - ${diagnostic.nome_empresa || "Diagn\u00f3stico"}</title>
+    <title>Relat\u00f3rio - ${escapeHtml(diagnostic.nome_empresa || "Diagn\u00f3stico")}</title>
     <style>
       * { box-sizing: border-box; }
       body { font-family: Arial, sans-serif; color: #18233f; margin: 10px 12px; line-height: 1.4; overflow-wrap: anywhere; }
@@ -600,10 +977,14 @@ function buildPrintableReport(diagnostic, analysisData) {
       .report-header-item strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: #5a6784; margin-bottom: 4px; }
       .report-header-item span,
       .report-summary-block p,
+      .report-analysis-group p,
       .report-item span,
       li { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
       .report-section { margin-top: 12px; }
       .report-section-highlight { margin-top: 0; padding: 10px 12px; border: 1px solid #dce3f5; border-radius: 12px; background: #f7f9ff; }
+      .report-analysis-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px; }
+      .report-analysis-badge { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; color: #24386f; background: #e8edff; border: 1px solid #cad6ff; }
+      .report-analysis-group { margin-top: 12px; }
       .report-summary-block { margin-bottom: 10px; }
       .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .report-item { border: 1px solid #d6dceb; border-radius: 8px; padding: 8px 10px; background: #f8faff; }
@@ -634,7 +1015,7 @@ function buildPrintableReport(diagnostic, analysisData) {
           </div>
           <div class="report-header-item">
             <strong>Canais principais</strong>
-            <span>${formatPrintableText(analysisData.channels.join(", "))}</span>
+            <span>${formatPrintableText(sanitizeList(channels).join(", "))}</span>
           </div>
         </div>
       </header>
@@ -754,16 +1135,40 @@ function createDiagnosticCard(diagnostic) {
 
   detailsPanel.append(technicalToggle, technicalPanel);
 
-  let cachedAnalysis = null;
+  let cachedLocalAnalysis = null;
+  let cachedAIAnalysis = null;
+  let analysisRequest = null;
 
-  function ensureAnalysis() {
-    if (!cachedAnalysis) {
-      cachedAnalysis = generateAnalysisData(diagnostic);
-      analysisContainer.innerHTML = "";
-      analysisContainer.append(createAnalysisBlock(cachedAnalysis));
+  function ensureLocalAnalysis() {
+    if (!cachedLocalAnalysis) {
+      cachedLocalAnalysis = buildLocalFallbackAnalysis(diagnostic);
     }
 
-    return cachedAnalysis;
+    return cachedLocalAnalysis;
+  }
+
+  function renderAnalysis(analysis, options = {}) {
+    analysisContainer.innerHTML = "";
+    analysisContainer.append(createAnalysisBlock(analysis, options));
+  }
+
+  async function ensureAIAnalysis() {
+    if (cachedAIAnalysis) {
+      return cachedAIAnalysis;
+    }
+
+    if (!analysisRequest) {
+      analysisRequest = requestAIAnalysis(diagnostic)
+        .then((analysis) => {
+          cachedAIAnalysis = analysis;
+          return analysis;
+        })
+        .finally(() => {
+          analysisRequest = null;
+        });
+    }
+
+    return analysisRequest;
   }
 
   detailsButton.addEventListener("click", () => {
@@ -771,15 +1176,39 @@ function createDiagnosticCard(diagnostic) {
     detailsButton.textContent = isOpen ? "Ocultar detalhes" : "Ver detalhes";
   });
 
-  analysisButton.addEventListener("click", () => {
-    ensureAnalysis();
+  analysisButton.addEventListener("click", async () => {
     detailsPanel.classList.add("is-open");
     detailsButton.textContent = "Ocultar detalhes";
-    analysisContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+    if (cachedAIAnalysis) {
+      renderAnalysis(cachedAIAnalysis);
+      analysisContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+
+    const originalLabel = analysisButton.textContent;
+    analysisButton.disabled = true;
+    analysisButton.textContent = "Gerando an\u00e1lise...";
+    analysisContainer.innerHTML = "";
+    analysisContainer.append(createAnalysisLoadingState("Gerando an\u00e1lise estrat\u00e9gica com IA..."));
+
+    try {
+      const analysis = await ensureAIAnalysis();
+      renderAnalysis(analysis);
+    } catch (error) {
+      console.error("Erro ao gerar an\u00e1lise com IA", error);
+      renderAnalysis(ensureLocalAnalysis(), {
+        notice: "N\u00e3o foi poss\u00edvel gerar a an\u00e1lise por IA agora. Exibindo a an\u00e1lise local como fallback."
+      });
+    } finally {
+      analysisButton.disabled = false;
+      analysisButton.textContent = originalLabel;
+      analysisContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   });
 
   pdfButton.addEventListener("click", () => {
-    const analysisData = ensureAnalysis();
+    const analysisData = cachedAIAnalysis || ensureLocalAnalysis();
     openPrintWindow(diagnostic, analysisData);
   });
 

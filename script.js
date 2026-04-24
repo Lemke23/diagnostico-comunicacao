@@ -7,7 +7,6 @@ const sections = Array.from(document.querySelectorAll(".form-section"));
 const submitButtons = Array.from(form.querySelectorAll("button"));
 const SUPABASE_URL = "https://apqevpormksrrdcpdwgt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_nZRdfhGhLtsqMPMjoot4_A_2WbTcESy";
-let preserveSuccessMessage = false;
 
 const stepOrder = ["identificacao", "instagram", "atendimento", "vendas"];
 
@@ -990,13 +989,10 @@ form.addEventListener("reset", () => {
     form.querySelectorAll("textarea[maxlength]").forEach((textarea) => {
       updateCharacterCounter(textarea);
     });
-    if (!preserveSuccessMessage) {
-      setStatus("");
-    }
+    setStatus("");
     updateProgress();
     setActiveStep(stepOrder[0]);
     window.scrollTo({ top: 0, behavior: "smooth" });
-    preserveSuccessMessage = false;
   }, 0);
 });
 
@@ -1036,10 +1032,7 @@ form.addEventListener("submit", async (event) => {
     };
 
     await enviarFormulario(dados);
-
-    setStatus("Diagn\u00f3stico enviado com sucesso");
-    preserveSuccessMessage = true;
-    form.reset();
+    window.location.href = "sucesso.html";
   } catch (error) {
     console.error("Erro ao enviar diagn\u00f3stico", error);
     setStatus("Erro ao enviar. Tente novamente.", "error");

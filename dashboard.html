@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Diagn&oacute;sticos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <main class="dashboard-page">
+    <section class="dashboard-hero">
+      <p class="dashboard-eyebrow">Painel privado</p>
+      <h1>Dashboard de Diagn&oacute;sticos</h1>
+      <p class="dashboard-subtitle">Acompanhe os diagn&oacute;sticos enviados, consulte os detalhes e filtre rapidamente por empresa.</p>
+    </section>
+
+    <section class="auth-card" id="auth-card">
+      <div class="card-header">
+        <h2>Entrar no painel</h2>
+        <p>Use um usu&aacute;rio autorizado do Supabase Auth para acessar os dados.</p>
+      </div>
+
+      <form id="login-form" class="auth-form" novalidate>
+        <div class="field">
+          <label for="dashboard-email">E-mail</label>
+          <input id="dashboard-email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="dashboard-password">Senha</label>
+          <input id="dashboard-password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+
+        <button class="primary-button" type="submit" id="login-button">Entrar</button>
+        <p class="feedback-message" id="auth-feedback" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="dashboard-shell is-hidden" id="dashboard-shell">
+      <div class="toolbar">
+        <div>
+          <h2>Diagn&oacute;sticos recebidos</h2>
+          <p id="session-email" class="session-email"></p>
+        </div>
+
+        <div class="toolbar-actions">
+          <label class="search-field" for="search-company">
+            <span>Buscar empresa</span>
+            <input id="search-company" type="search" placeholder="Digite o nome da empresa">
+          </label>
+          <button class="secondary-button" type="button" id="refresh-button">Atualizar dados</button>
+          <button class="secondary-button" type="button" id="logout-button">Sair</button>
+        </div>
+      </div>
+
+      <p class="feedback-message" id="dashboard-feedback" aria-live="polite"></p>
+
+      <div class="results-summary" id="results-summary"></div>
+      <div class="diagnostics-list" id="diagnostics-list"></div>
+    </section>
+  </main>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

@@ -219,6 +219,13 @@ input {
   align-items: start;
 }
 
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .diagnostic-card h3 {
   margin: 0;
   font-size: 1.12rem;
@@ -262,6 +269,91 @@ input {
 
 .details-panel.is-open {
   display: block;
+}
+
+.structured-section {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.structured-section h4,
+.analysis-block h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.structured-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-row {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid #e3e7f3;
+  border-radius: 12px;
+  background: var(--panel-soft);
+}
+
+.detail-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.detail-value {
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.analysis-container {
+  margin-top: 16px;
+}
+
+.analysis-block {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #dce3f5;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f7f9ff 0%, #fefeff 100%);
+}
+
+.analysis-summary {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.analysis-section {
+  display: grid;
+  gap: 8px;
+}
+
+.analysis-section h5 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.analysis-section ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.technical-toggle {
+  margin-top: 16px;
+}
+
+.technical-json {
+  margin-top: 12px;
 }
 
 .details-panel pre {
@@ -319,6 +411,19 @@ input {
   }
 
   .diagnostic-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .card-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .card-actions .details-button {
+    width: 100%;
+  }
+
+  .structured-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -721,7 +721,7 @@ function buildLocalFallbackAnalysis(diagnostic) {
   const localAnalysis = generateAnalysisData(diagnostic);
   const maturity = inferLocalMaturity(diagnostic, localAnalysis);
   const respostas = parseJsonSafe(diagnostic.respostas) || {};
-  const priorities = sanitizeList([
+  const prioridades = sanitizeList([
     respostas.improvementPriority ? `Executar primeiro: ${respostas.improvementPriority}` : "",
     ...localAnalysis.suggestions
   ]).slice(0, 5);
@@ -729,15 +729,18 @@ function buildLocalFallbackAnalysis(diagnostic) {
   return {
     source: "local",
     sourceLabel: "An\u00e1lise local (fallback)",
-    resumo_executivo: localAnalysis.summary,
-    nivel_maturidade_digital: maturity,
-    pontos_fortes: sanitizeList(localAnalysis.strengths),
-    gargalos: sanitizeList(localAnalysis.bottlenecks),
+    resumo_executivo: sanitizeText(localAnalysis.summary),
+    nivel_maturidade_digital: {
+      classificacao: normalizeMaturityClass(maturity?.classificacao),
+      justificativa: sanitizeText(maturity?.justificativa)
+    },
+    pontos_fortes: sanitizeList(localAnalysis.strengths, []),
+    gargalos: sanitizeList(localAnalysis.bottlenecks, []),
     prioridades,
-    ideias_de_melhoria: sanitizeList(localAnalysis.suggestions),
-    plano_acao_7_dias: buildActionPlan7Days(localAnalysis, diagnostic),
-    plano_acao_30_dias: buildActionPlan30Days(localAnalysis, diagnostic),
-    mensagem_final_para_empresa: `A empresa tem espa\u00e7o claro para evoluir a comunica\u00e7\u00e3o, o atendimento e a opera\u00e7\u00e3o comercial. O pr\u00f3ximo ganho tende a vir da execu\u00e7\u00e3o consistente das prioridades imediatas, sem dispersar energia em muitas frentes ao mesmo tempo.`
+    ideias_de_melhoria: sanitizeList(localAnalysis.suggestions, []),
+    plano_acao_7_dias: sanitizeList(buildActionPlan7Days(localAnalysis, diagnostic), []),
+    plano_acao_30_dias: sanitizeList(buildActionPlan30Days(localAnalysis, diagnostic), []),
+    mensagem_final_para_empresa: sanitizeText("A empresa tem espa\u00e7o claro para evoluir a comunica\u00e7\u00e3o, o atendimento e a opera\u00e7\u00e3o comercial. O pr\u00f3ximo ganho tende a vir da execu\u00e7\u00e3o consistente das prioridades imediatas, sem dispersar energia em muitas frentes ao mesmo tempo.")
   };
 }
 
@@ -1196,7 +1199,7 @@ function createDiagnosticCard(diagnostic) {
       const analysis = await ensureAIAnalysis();
       renderAnalysis(analysis);
     } catch (error) {
-      console.error("Erro ao gerar an\u00e1lise com IA", error);
+      console.error(`Erro ao gerar an\u00e1lise com IA pela fun\u00e7\u00e3o ${ANALYSIS_ENDPOINT}. Usando fallback local.`, error);
       renderAnalysis(ensureLocalAnalysis(), {
         notice: "N\u00e3o foi poss\u00edvel gerar a an\u00e1lise por IA agora. Exibindo a an\u00e1lise local como fallback."
       });

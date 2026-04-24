@@ -33,13 +33,13 @@
 
         <div class="step-tabs" aria-label="Etapas do diagn&oacute;stico">
           <button class="step-tab is-active" type="button" data-step-target="identificacao">Identifica&ccedil;&atilde;o</button>
-          <button class="step-tab" type="button" data-step-target="instagram">Instagram e comunica&ccedil;&atilde;o digital</button>
-          <button class="step-tab" type="button" data-step-target="atendimento">Atendimento</button>
+          <button class="step-tab" type="button" data-step-target="instagram">Canais digitais e comunica&ccedil;&atilde;o</button>
+          <button class="step-tab" type="button" data-step-target="atendimento">Automa&ccedil;&atilde;o e atendimento</button>
           <button class="step-tab" type="button" data-step-target="vendas">Vendas e organiza&ccedil;&atilde;o</button>
         </div>
       </div>
 
-      <form id="diagnostic-form" action="https://formspree.io/f/xeevvlea" method="POST" novalidate>
+      <form id="diagnostic-form" novalidate>
         <div class="form-header">
           <h2>Responda o diagn&oacute;stico</h2>
         </div>
@@ -142,7 +142,7 @@
         <section class="form-section" id="instagram" data-step="instagram">
           <div class="section-title">
             <span class="section-number">2</span>
-            <h3>Instagram e comunica&ccedil;&atilde;o digital</h3>
+            <h3>Canais digitais e comunica&ccedil;&atilde;o</h3>
           </div>
 
           <div class="field" data-field="topProducts">
@@ -151,142 +151,931 @@
             <small class="error" id="topProducts-error"></small>
           </div>
 
-          <div class="field" data-field="salesChannel">
-            <label for="sales-channel">Seu principal canal de vendas hoje &eacute;: <span class="required-mark">*</span></label>
-            <div class="select-wrap">
-              <select id="sales-channel" name="salesChannel" required>
-                <option value="">Selecione uma op&ccedil;&atilde;o</option>
-                <option value="Instagram">Instagram</option>
-                <option value="WhatsApp">WhatsApp</option>
-                <option value="Indica&ccedil;&atilde;o">Indica&ccedil;&atilde;o</option>
-                <option value="Loja f&iacute;sica">Loja f&iacute;sica</option>
-                <option value="Outro">Outro</option>
-              </select>
+          <div class="field" data-field="salesChannels">
+            <span class="field-label">Quais canais mais geram vendas hoje? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="sales-channels-instagram">
+                <input id="sales-channels-instagram" name="salesChannels" type="checkbox" value="Instagram">
+                <span>Instagram</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-whatsapp">
+                <input id="sales-channels-whatsapp" name="salesChannels" type="checkbox" value="WhatsApp">
+                <span>WhatsApp</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-facebook">
+                <input id="sales-channels-facebook" name="salesChannels" type="checkbox" value="Facebook">
+                <span>Facebook</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-tiktok">
+                <input id="sales-channels-tiktok" name="salesChannels" type="checkbox" value="TikTok">
+                <span>TikTok</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-google">
+                <input id="sales-channels-google" name="salesChannels" type="checkbox" value="Google / Pesquisa">
+                <span>Google / Pesquisa</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-referral">
+                <input id="sales-channels-referral" name="salesChannels" type="checkbox" value="Indica&ccedil;&atilde;o">
+                <span>Indica&ccedil;&atilde;o</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-store">
+                <input id="sales-channels-store" name="salesChannels" type="checkbox" value="Loja f&iacute;sica">
+                <span>Loja f&iacute;sica</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-website">
+                <input id="sales-channels-website" name="salesChannels" type="checkbox" value="Site pr&oacute;prio">
+                <span>Site pr&oacute;prio</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-marketplace">
+                <input id="sales-channels-marketplace" name="salesChannels" type="checkbox" value="Marketplace">
+                <span>Marketplace</span>
+              </label>
+              <label class="choice-pill" for="sales-channels-other">
+                <input id="sales-channels-other" name="salesChannels" type="checkbox" value="Outro">
+                <span>Outro</span>
+              </label>
             </div>
-            <small class="error" id="salesChannel-error"></small>
+            <small class="error" id="salesChannels-error"></small>
           </div>
 
-          <div class="field" data-field="instagramUse">
-            <span class="field-label">O Instagram hoje &eacute; usado mais para: <span class="required-mark">*</span></span>
-            <div class="choice-group">
-              <label class="choice-pill" for="instagram-use-sell">
-                <input id="instagram-use-sell" name="instagramUse" type="radio" value="Vender" required>
-                <span>Vender</span>
-              </label>
-              <label class="choice-pill" for="instagram-use-routine">
-                <input id="instagram-use-routine" name="instagramUse" type="radio" value="Mostrar rotina" required>
-                <span>Mostrar rotina</span>
-              </label>
-              <label class="choice-pill" for="instagram-use-both">
-                <input id="instagram-use-both" name="instagramUse" type="radio" value="Os dois" required>
-                <span>Os dois</span>
-              </label>
+          <section class="conditional-block is-hidden" data-channel-block="Instagram">
+            <div class="conditional-block-header">
+              <h4>Instagram</h4>
             </div>
-            <small class="error" id="instagramUse-error"></small>
-          </div>
+            <div class="field-grid">
+              <div class="field" data-field="instagramObjective">
+                <span class="field-label">Objetivo principal <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="instagram-objective-sales">
+                    <input id="instagram-objective-sales" name="instagramObjective" type="radio" value="Vendas">
+                    <span>Vendas</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-objective-leads">
+                    <input id="instagram-objective-leads" name="instagramObjective" type="radio" value="Leads">
+                    <span>Leads</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-objective-authority">
+                    <input id="instagram-objective-authority" name="instagramObjective" type="radio" value="Autoridade">
+                    <span>Autoridade</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-objective-presence">
+                    <input id="instagram-objective-presence" name="instagramObjective" type="radio" value="Presen&ccedil;a">
+                    <span>Presen&ccedil;a</span>
+                  </label>
+                </div>
+                <small class="error" id="instagramObjective-error"></small>
+              </div>
 
-          <div class="field" data-field="profileClarity">
-            <span class="field-label">Voc&ecirc; acha que quem entra no seu perfil entende claramente o que voc&ecirc; vende? <span class="required-mark">*</span></span>
-            <div class="choice-group">
-              <label class="choice-pill" for="profile-clear-yes">
-                <input id="profile-clear-yes" name="profileClarity" type="radio" value="Sim" required>
-                <span>Sim</span>
-              </label>
-              <label class="choice-pill" for="profile-clear-no">
-                <input id="profile-clear-no" name="profileClarity" type="radio" value="N&atilde;o" required>
-                <span>N&atilde;o</span>
-              </label>
-              <label class="choice-pill" for="profile-clear-maybe">
-                <input id="profile-clear-maybe" name="profileClarity" type="radio" value="Mais ou menos" required>
-                <span>Mais ou menos</span>
-              </label>
-            </div>
-            <small class="error" id="profileClarity-error"></small>
-          </div>
+              <div class="field" data-field="instagramProfileClarity">
+                <span class="field-label">Clareza do perfil <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="instagram-clarity-yes">
+                    <input id="instagram-clarity-yes" name="instagramProfileClarity" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-clarity-no">
+                    <input id="instagram-clarity-no" name="instagramProfileClarity" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-clarity-partial">
+                    <input id="instagram-clarity-partial" name="instagramProfileClarity" type="radio" value="Parcialmente">
+                    <span>Parcialmente</span>
+                  </label>
+                </div>
+                <small class="error" id="instagramProfileClarity-error"></small>
+              </div>
 
-          <div class="field" data-field="separateProfile">
-            <span class="field-label">Voc&ecirc; j&aacute; pensou em separar o perfil pessoal do profissional? <span class="required-mark">*</span></span>
-            <div class="choice-group">
-              <label class="choice-pill" for="separate-profile-yes">
-                <input id="separate-profile-yes" name="separateProfile" type="radio" value="Sim" required>
-                <span>Sim</span>
-              </label>
-              <label class="choice-pill" for="separate-profile-no">
-                <input id="separate-profile-no" name="separateProfile" type="radio" value="N&atilde;o" required>
-                <span>N&atilde;o</span>
-              </label>
+              <div class="field" data-field="instagramPostingFrequency">
+                <span class="field-label">Frequ&ecirc;ncia de postagem <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="instagram-frequency-daily">
+                    <input id="instagram-frequency-daily" name="instagramPostingFrequency" type="radio" value="Di&aacute;rio">
+                    <span>Di&aacute;rio</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-frequency-weekly">
+                    <input id="instagram-frequency-weekly" name="instagramPostingFrequency" type="radio" value="Semanal">
+                    <span>Semanal</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-frequency-sporadic">
+                    <input id="instagram-frequency-sporadic" name="instagramPostingFrequency" type="radio" value="Espor&aacute;dico">
+                    <span>Espor&aacute;dico</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-frequency-none">
+                    <input id="instagram-frequency-none" name="instagramPostingFrequency" type="radio" value="N&atilde;o publica">
+                    <span>N&atilde;o publica</span>
+                  </label>
+                </div>
+                <small class="error" id="instagramPostingFrequency-error"></small>
+              </div>
+
+              <div class="field" data-field="instagramContentPattern">
+                <span class="field-label">Possui padr&atilde;o de conte&uacute;do <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="instagram-content-pattern-yes">
+                    <input id="instagram-content-pattern-yes" name="instagramContentPattern" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-content-pattern-no">
+                    <input id="instagram-content-pattern-no" name="instagramContentPattern" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="instagramContentPattern-error"></small>
+              </div>
+
+              <div class="field" data-field="instagramResultsTracking">
+                <span class="field-label">Mede resultados <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="instagram-results-reach">
+                    <input id="instagram-results-reach" name="instagramResultsTracking" type="radio" value="Alcance">
+                    <span>Alcance</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-results-messages">
+                    <input id="instagram-results-messages" name="instagramResultsTracking" type="radio" value="Mensagens">
+                    <span>Mensagens</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-results-sales">
+                    <input id="instagram-results-sales" name="instagramResultsTracking" type="radio" value="Vendas">
+                    <span>Vendas</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-results-none">
+                    <input id="instagram-results-none" name="instagramResultsTracking" type="radio" value="N&atilde;o mede">
+                    <span>N&atilde;o mede</span>
+                  </label>
+                </div>
+                <small class="error" id="instagramResultsTracking-error"></small>
+              </div>
+
+              <div class="field" data-field="instagramClientInitiates">
+                <span class="field-label">Cliente inicia contato <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="instagram-client-initiates-yes">
+                    <input id="instagram-client-initiates-yes" name="instagramClientInitiates" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="instagram-client-initiates-no">
+                    <input id="instagram-client-initiates-no" name="instagramClientInitiates" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="instagramClientInitiates-error"></small>
+              </div>
             </div>
-            <small class="error" id="separateProfile-error"></small>
-          </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="WhatsApp">
+            <div class="conditional-block-header">
+              <h4>WhatsApp</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="whatsappUse">
+                <span class="field-label">Uso <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="whatsapp-use-service">
+                    <input id="whatsapp-use-service" name="whatsappUse" type="radio" value="Atendimento">
+                    <span>Atendimento</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-use-sales">
+                    <input id="whatsapp-use-sales" name="whatsappUse" type="radio" value="Vendas">
+                    <span>Vendas</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-use-both">
+                    <input id="whatsapp-use-both" name="whatsappUse" type="radio" value="Ambos">
+                    <span>Ambos</span>
+                  </label>
+                </div>
+                <small class="error" id="whatsappUse-error"></small>
+              </div>
+
+              <div class="field" data-field="whatsappProcess">
+                <span class="field-label">Existe processo <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="whatsapp-process-yes">
+                    <input id="whatsapp-process-yes" name="whatsappProcess" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-process-no">
+                    <input id="whatsapp-process-no" name="whatsappProcess" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-process-partial">
+                    <input id="whatsapp-process-partial" name="whatsappProcess" type="radio" value="Parcialmente">
+                    <span>Parcialmente</span>
+                  </label>
+                </div>
+                <small class="error" id="whatsappProcess-error"></small>
+              </div>
+
+              <div class="field" data-field="whatsappFirstContact">
+                <span class="field-label">Primeiro contato <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="whatsapp-first-contact-standard">
+                    <input id="whatsapp-first-contact-standard" name="whatsappFirstContact" type="radio" value="Padronizado">
+                    <span>Padronizado</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-first-contact-improvised">
+                    <input id="whatsapp-first-contact-improvised" name="whatsappFirstContact" type="radio" value="Improvisado">
+                    <span>Improvisado</span>
+                  </label>
+                </div>
+                <small class="error" id="whatsappFirstContact-error"></small>
+              </div>
+
+              <div class="field" data-field="whatsappResponseTime">
+                <span class="field-label">Tempo de resposta <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="whatsapp-response-immediate">
+                    <input id="whatsapp-response-immediate" name="whatsappResponseTime" type="radio" value="Imediato">
+                    <span>Imediato</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-response-one-hour">
+                    <input id="whatsapp-response-one-hour" name="whatsappResponseTime" type="radio" value="At&eacute; 1h">
+                    <span>At&eacute; 1h</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-response-hours">
+                    <input id="whatsapp-response-hours" name="whatsappResponseTime" type="radio" value="Horas">
+                    <span>Horas</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-response-delayed">
+                    <input id="whatsapp-response-delayed" name="whatsappResponseTime" type="radio" value="Demorado">
+                    <span>Demorado</span>
+                  </label>
+                </div>
+                <small class="error" id="whatsappResponseTime-error"></small>
+              </div>
+
+              <div class="field" data-field="whatsappConversionStrategy">
+                <span class="field-label">Estrat&eacute;gia de convers&atilde;o <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="whatsapp-strategy-script">
+                    <input id="whatsapp-strategy-script" name="whatsappConversionStrategy" type="radio" value="Roteiro">
+                    <span>Roteiro</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-strategy-presentation">
+                    <input id="whatsapp-strategy-presentation" name="whatsappConversionStrategy" type="radio" value="Apresenta&ccedil;&atilde;o">
+                    <span>Apresenta&ccedil;&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-strategy-proof">
+                    <input id="whatsapp-strategy-proof" name="whatsappConversionStrategy" type="radio" value="Prova social">
+                    <span>Prova social</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-strategy-none">
+                    <input id="whatsapp-strategy-none" name="whatsappConversionStrategy" type="radio" value="N&atilde;o usa">
+                    <span>N&atilde;o usa</span>
+                  </label>
+                </div>
+                <small class="error" id="whatsappConversionStrategy-error"></small>
+              </div>
+
+              <div class="field" data-field="whatsappLosesClients">
+                <span class="field-label">Perde clientes ap&oacute;s contato <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="whatsapp-loses-clients-yes">
+                    <input id="whatsapp-loses-clients-yes" name="whatsappLosesClients" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-loses-clients-no">
+                    <input id="whatsapp-loses-clients-no" name="whatsappLosesClients" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="whatsapp-loses-clients-unknown">
+                    <input id="whatsapp-loses-clients-unknown" name="whatsappLosesClients" type="radio" value="N&atilde;o sabe">
+                    <span>N&atilde;o sabe</span>
+                  </label>
+                </div>
+                <small class="error" id="whatsappLosesClients-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Facebook">
+            <div class="conditional-block-header">
+              <h4>Facebook</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="facebookResults">
+                <span class="field-label">Gera resultado <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="facebook-results-sales">
+                    <input id="facebook-results-sales" name="facebookResults" type="radio" value="Vendas">
+                    <span>Vendas</span>
+                  </label>
+                  <label class="choice-pill" for="facebook-results-contacts">
+                    <input id="facebook-results-contacts" name="facebookResults" type="radio" value="Contatos">
+                    <span>Contatos</span>
+                  </label>
+                  <label class="choice-pill" for="facebook-results-visibility">
+                    <input id="facebook-results-visibility" name="facebookResults" type="radio" value="Visibilidade">
+                    <span>Visibilidade</span>
+                  </label>
+                  <label class="choice-pill" for="facebook-results-none">
+                    <input id="facebook-results-none" name="facebookResults" type="radio" value="Nenhum">
+                    <span>Nenhum</span>
+                  </label>
+                </div>
+                <small class="error" id="facebookResults-error"></small>
+              </div>
+
+              <div class="field" data-field="facebookPostingFrequency">
+                <span class="field-label">Frequ&ecirc;ncia de postagem <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="facebook-posting-yes">
+                    <input id="facebook-posting-yes" name="facebookPostingFrequency" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="facebook-posting-no">
+                    <input id="facebook-posting-no" name="facebookPostingFrequency" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="facebookPostingFrequency-error"></small>
+              </div>
+
+              <div class="field" data-field="facebookAdsUsage">
+                <span class="field-label">Uso de an&uacute;ncios <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="facebook-ads-paid">
+                    <input id="facebook-ads-paid" name="facebookAdsUsage" type="radio" value="An&uacute;ncios">
+                    <span>An&uacute;ncios</span>
+                  </label>
+                  <label class="choice-pill" for="facebook-ads-organic">
+                    <input id="facebook-ads-organic" name="facebookAdsUsage" type="radio" value="Org&acirc;nico">
+                    <span>Org&acirc;nico</span>
+                  </label>
+                  <label class="choice-pill" for="facebook-ads-none">
+                    <input id="facebook-ads-none" name="facebookAdsUsage" type="radio" value="Nenhum">
+                    <span>Nenhum</span>
+                  </label>
+                </div>
+                <small class="error" id="facebookAdsUsage-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="TikTok">
+            <div class="conditional-block-header">
+              <h4>TikTok</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="tiktokUse">
+                <span class="field-label">Uso <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="tiktok-use-attraction">
+                    <input id="tiktok-use-attraction" name="tiktokUse" type="radio" value="Atra&ccedil;&atilde;o">
+                    <span>Atra&ccedil;&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="tiktok-use-sales">
+                    <input id="tiktok-use-sales" name="tiktokUse" type="radio" value="Vendas">
+                    <span>Vendas</span>
+                  </label>
+                  <label class="choice-pill" for="tiktok-use-positioning">
+                    <input id="tiktok-use-positioning" name="tiktokUse" type="radio" value="Posicionamento">
+                    <span>Posicionamento</span>
+                  </label>
+                  <label class="choice-pill" for="tiktok-use-none">
+                    <input id="tiktok-use-none" name="tiktokUse" type="radio" value="N&atilde;o usa">
+                    <span>N&atilde;o usa</span>
+                  </label>
+                </div>
+                <small class="error" id="tiktokUse-error"></small>
+              </div>
+
+              <div class="field" data-field="tiktokFrequency">
+                <span class="field-label">Frequ&ecirc;ncia <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="tiktok-frequency-yes">
+                    <input id="tiktok-frequency-yes" name="tiktokFrequency" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="tiktok-frequency-no">
+                    <input id="tiktok-frequency-no" name="tiktokFrequency" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="tiktokFrequency-error"></small>
+              </div>
+
+              <div class="field" data-field="tiktokHighReach">
+                <span class="field-label">J&aacute; teve alcance alto <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="tiktok-reach-yes">
+                    <input id="tiktok-reach-yes" name="tiktokHighReach" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="tiktok-reach-no">
+                    <input id="tiktok-reach-no" name="tiktokHighReach" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="tiktokHighReach-error"></small>
+              </div>
+
+              <div class="field" data-field="tiktokDirectsChannel">
+                <span class="field-label">Direciona para outro canal <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="tiktok-directs-yes">
+                    <input id="tiktok-directs-yes" name="tiktokDirectsChannel" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="tiktok-directs-no">
+                    <input id="tiktok-directs-no" name="tiktokDirectsChannel" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="tiktokDirectsChannel-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Google / Pesquisa">
+            <div class="conditional-block-header">
+              <h4>Google / Pesquisa</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="googleSearchPresence">
+                <span class="field-label">Aparece em pesquisas <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="google-search-presence-yes">
+                    <input id="google-search-presence-yes" name="googleSearchPresence" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="google-search-presence-no">
+                    <input id="google-search-presence-no" name="googleSearchPresence" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="google-search-presence-unknown">
+                    <input id="google-search-presence-unknown" name="googleSearchPresence" type="radio" value="N&atilde;o sabe">
+                    <span>N&atilde;o sabe</span>
+                  </label>
+                </div>
+                <small class="error" id="googleSearchPresence-error"></small>
+              </div>
+
+              <div class="field" data-field="googleBusinessProfile">
+                <span class="field-label">Possui Google Meu Neg&oacute;cio <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="google-business-profile-yes">
+                    <input id="google-business-profile-yes" name="googleBusinessProfile" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="google-business-profile-no">
+                    <input id="google-business-profile-no" name="googleBusinessProfile" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="googleBusinessProfile-error"></small>
+              </div>
+
+              <div class="field" data-field="googleReceivesContacts">
+                <span class="field-label">Recebe contatos <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="google-receives-contacts-yes">
+                    <input id="google-receives-contacts-yes" name="googleReceivesContacts" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="google-receives-contacts-no">
+                    <input id="google-receives-contacts-no" name="googleReceivesContacts" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="googleReceivesContacts-error"></small>
+              </div>
+
+              <div class="field" data-field="googleHasReviews">
+                <span class="field-label">Possui avalia&ccedil;&otilde;es <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="google-has-reviews-yes">
+                    <input id="google-has-reviews-yes" name="googleHasReviews" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="google-has-reviews-no">
+                    <input id="google-has-reviews-no" name="googleHasReviews" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="googleHasReviews-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Indica&ccedil;&atilde;o">
+            <div class="conditional-block-header">
+              <h4>Indica&ccedil;&atilde;o</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="referralImportance">
+                <span class="field-label">Import&acirc;ncia <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="referral-importance-main">
+                    <input id="referral-importance-main" name="referralImportance" type="radio" value="Principal">
+                    <span>Principal</span>
+                  </label>
+                  <label class="choice-pill" for="referral-importance-complementary">
+                    <input id="referral-importance-complementary" name="referralImportance" type="radio" value="Complementar">
+                    <span>Complementar</span>
+                  </label>
+                  <label class="choice-pill" for="referral-importance-rare">
+                    <input id="referral-importance-rare" name="referralImportance" type="radio" value="Rara">
+                    <span>Rara</span>
+                  </label>
+                </div>
+                <small class="error" id="referralImportance-error"></small>
+              </div>
+
+              <div class="field" data-field="referralEncourages">
+                <span class="field-label">Incentiva indica&ccedil;&atilde;o <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="referral-encourages-yes">
+                    <input id="referral-encourages-yes" name="referralEncourages" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="referral-encourages-no">
+                    <input id="referral-encourages-no" name="referralEncourages" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="referralEncourages-error"></small>
+              </div>
+
+              <div class="field" data-field="referralProcess">
+                <span class="field-label">Possui processo <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="referral-process-yes">
+                    <input id="referral-process-yes" name="referralProcess" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="referral-process-no">
+                    <input id="referral-process-no" name="referralProcess" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="referralProcess-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Loja f&iacute;sica">
+            <div class="conditional-block-header">
+              <h4>Loja f&iacute;sica</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="storeFlow">
+                <span class="field-label">Fluxo <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="store-flow-high">
+                    <input id="store-flow-high" name="storeFlow" type="radio" value="Alto">
+                    <span>Alto</span>
+                  </label>
+                  <label class="choice-pill" for="store-flow-medium">
+                    <input id="store-flow-medium" name="storeFlow" type="radio" value="M&eacute;dio">
+                    <span>M&eacute;dio</span>
+                  </label>
+                  <label class="choice-pill" for="store-flow-low">
+                    <input id="store-flow-low" name="storeFlow" type="radio" value="Baixo">
+                    <span>Baixo</span>
+                  </label>
+                </div>
+                <small class="error" id="storeFlow-error"></small>
+              </div>
+
+              <div class="field" data-field="storeProductClarity">
+                <span class="field-label">Cliente entende o produto <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="store-product-clarity-yes">
+                    <input id="store-product-clarity-yes" name="storeProductClarity" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="store-product-clarity-no">
+                    <input id="store-product-clarity-no" name="storeProductClarity" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="storeProductClarity-error"></small>
+              </div>
+
+              <div class="field" data-field="storeVisualOrganization">
+                <span class="field-label">Organiza&ccedil;&atilde;o visual <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="store-visual-organization-yes">
+                    <input id="store-visual-organization-yes" name="storeVisualOrganization" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="store-visual-organization-no">
+                    <input id="store-visual-organization-no" name="storeVisualOrganization" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="store-visual-organization-partial">
+                    <input id="store-visual-organization-partial" name="storeVisualOrganization" type="radio" value="Parcialmente">
+                    <span>Parcialmente</span>
+                  </label>
+                </div>
+                <small class="error" id="storeVisualOrganization-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Site pr&oacute;prio">
+            <div class="conditional-block-header">
+              <h4>Site pr&oacute;prio</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="websiteOutcome">
+                <span class="field-label">Gera <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="website-outcome-sales">
+                    <input id="website-outcome-sales" name="websiteOutcome" type="radio" value="Vendas">
+                    <span>Vendas</span>
+                  </label>
+                  <label class="choice-pill" for="website-outcome-contacts">
+                    <input id="website-outcome-contacts" name="websiteOutcome" type="radio" value="Contatos">
+                    <span>Contatos</span>
+                  </label>
+                  <label class="choice-pill" for="website-outcome-information">
+                    <input id="website-outcome-information" name="websiteOutcome" type="radio" value="Informa&ccedil;&atilde;o">
+                    <span>Informa&ccedil;&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="website-outcome-none">
+                    <input id="website-outcome-none" name="websiteOutcome" type="radio" value="Nada">
+                    <span>Nada</span>
+                  </label>
+                </div>
+                <small class="error" id="websiteOutcome-error"></small>
+              </div>
+
+              <div class="field" data-field="websiteClearInformation">
+                <span class="field-label">Informa&ccedil;&otilde;es claras <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="website-clear-information-yes">
+                    <input id="website-clear-information-yes" name="websiteClearInformation" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="website-clear-information-no">
+                    <input id="website-clear-information-no" name="websiteClearInformation" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                  <label class="choice-pill" for="website-clear-information-partial">
+                    <input id="website-clear-information-partial" name="websiteClearInformation" type="radio" value="Parcialmente">
+                    <span>Parcialmente</span>
+                  </label>
+                </div>
+                <small class="error" id="websiteClearInformation-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Marketplace">
+            <div class="conditional-block-header">
+              <h4>Marketplace</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="marketplacePlatforms">
+                <label for="marketplace-platforms">Quais usa <span class="required-mark">*</span></label>
+                <textarea id="marketplace-platforms" name="marketplacePlatforms" rows="3" placeholder="Ex.: Mercado Livre, Shopee, Amazon"></textarea>
+                <small class="error" id="marketplacePlatforms-error"></small>
+              </div>
+
+              <div class="field" data-field="marketplaceSalesFrequency">
+                <span class="field-label">Frequ&ecirc;ncia de vendas <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="marketplace-frequency-frequent">
+                    <input id="marketplace-frequency-frequent" name="marketplaceSalesFrequency" type="radio" value="Frequente">
+                    <span>Frequente</span>
+                  </label>
+                  <label class="choice-pill" for="marketplace-frequency-occasional">
+                    <input id="marketplace-frequency-occasional" name="marketplaceSalesFrequency" type="radio" value="Ocasional">
+                    <span>Ocasional</span>
+                  </label>
+                  <label class="choice-pill" for="marketplace-frequency-low">
+                    <input id="marketplace-frequency-low" name="marketplaceSalesFrequency" type="radio" value="Baixa">
+                    <span>Baixa</span>
+                  </label>
+                </div>
+                <small class="error" id="marketplaceSalesFrequency-error"></small>
+              </div>
+
+              <div class="field" data-field="marketplaceStrategy">
+                <span class="field-label">Possui estrat&eacute;gia <span class="required-mark">*</span></span>
+                <div class="choice-group">
+                  <label class="choice-pill" for="marketplace-strategy-yes">
+                    <input id="marketplace-strategy-yes" name="marketplaceStrategy" type="radio" value="Sim">
+                    <span>Sim</span>
+                  </label>
+                  <label class="choice-pill" for="marketplace-strategy-no">
+                    <input id="marketplace-strategy-no" name="marketplaceStrategy" type="radio" value="N&atilde;o">
+                    <span>N&atilde;o</span>
+                  </label>
+                </div>
+                <small class="error" id="marketplaceStrategy-error"></small>
+              </div>
+            </div>
+          </section>
+
+          <section class="conditional-block is-hidden" data-channel-block="Outro">
+            <div class="conditional-block-header">
+              <h4>Outro canal</h4>
+            </div>
+            <div class="field-grid">
+              <div class="field" data-field="otherChannelName">
+                <label for="other-channel-name">Qual canal <span class="required-mark">*</span></label>
+                <input id="other-channel-name" name="otherChannelName" type="text" placeholder="Ex.: Telegram, e-mail marketing, panfleto">
+                <small class="error" id="otherChannelName-error"></small>
+              </div>
+
+              <div class="field" data-field="otherChannelHowWorks">
+                <label for="other-channel-how-works">Como funciona <span class="required-mark">*</span></label>
+                <textarea id="other-channel-how-works" name="otherChannelHowWorks" rows="3" placeholder="Explique como esse canal gera contato ou vendas."></textarea>
+                <small class="error" id="otherChannelHowWorks-error"></small>
+              </div>
+
+              <div class="field" data-field="otherChannelDifficulty">
+                <label for="other-channel-difficulty">Dificuldade <span class="required-mark">*</span></label>
+                <textarea id="other-channel-difficulty" name="otherChannelDifficulty" rows="3" placeholder="Descreva a principal dificuldade desse canal."></textarea>
+                <small class="error" id="otherChannelDifficulty-error"></small>
+              </div>
+            </div>
+          </section>
         </section>
 
         <section class="form-section" id="atendimento" data-step="atendimento">
           <div class="section-title">
             <span class="section-number">3</span>
-            <h3>Atendimento</h3>
+            <h3>Automa&ccedil;&atilde;o e processo de atendimento</h3>
           </div>
 
-          <div class="field" data-field="responder">
-            <span class="field-label">Quando um cliente entra em contato, quem responde normalmente? <span class="required-mark">*</span></span>
+          <div class="field" data-field="firstContactType">
+            <span class="field-label">Primeiro contato do cliente <span class="required-mark">*</span></span>
             <div class="choice-group">
-              <label class="choice-pill" for="responder-self">
-                <input id="responder-self" name="responder" type="radio" value="Eu mesmo" required>
-                <span>Eu mesmo</span>
+              <label class="choice-pill" for="first-contact-automatic">
+                <input id="first-contact-automatic" name="firstContactType" type="radio" value="Autom&aacute;tico">
+                <span>Autom&aacute;tico</span>
               </label>
-              <label class="choice-pill" for="responder-team">
-                <input id="responder-team" name="responder" type="radio" value="Equipe" required>
+              <label class="choice-pill" for="first-contact-person">
+                <input id="first-contact-person" name="firstContactType" type="radio" value="Pessoa">
+                <span>Pessoa</span>
+              </label>
+              <label class="choice-pill" for="first-contact-channel">
+                <input id="first-contact-channel" name="firstContactType" type="radio" value="Depende do canal">
+                <span>Depende do canal</span>
+              </label>
+              <label class="choice-pill" for="first-contact-none">
+                <input id="first-contact-none" name="firstContactType" type="radio" value="Sem padr&atilde;o">
+                <span>Sem padr&atilde;o</span>
+              </label>
+            </div>
+            <small class="error" id="firstContactType-error"></small>
+          </div>
+
+          <div class="field" data-field="automationUsage">
+            <span class="field-label">Utiliza automa&ccedil;&atilde;o <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="automation-usage-chatbot">
+                <input id="automation-usage-chatbot" name="automationUsage" type="radio" value="Chatbot">
+                <span>Chatbot</span>
+              </label>
+              <label class="choice-pill" for="automation-usage-simple">
+                <input id="automation-usage-simple" name="automationUsage" type="radio" value="Automa&ccedil;&atilde;o simples">
+                <span>Automa&ccedil;&atilde;o simples</span>
+              </label>
+              <label class="choice-pill" for="automation-usage-none">
+                <input id="automation-usage-none" name="automationUsage" type="radio" value="N&atilde;o utiliza">
+                <span>N&atilde;o utiliza</span>
+              </label>
+            </div>
+            <small class="error" id="automationUsage-error"></small>
+          </div>
+        </section>
+        
+        <section class="conditional-block is-hidden" data-conditional-block="automationType">
+          <div class="field" data-field="automationType">
+            <label for="automation-type">Tipo de automa&ccedil;&atilde;o <span class="required-mark">*</span></label>
+            <input id="automation-type" name="automationType" type="text" placeholder="Ex.: chatbot no WhatsApp, respostas autom&aacute;ticas, CRM">
+            <small class="error" id="automationType-error"></small>
+          </div>
+        </section>
+
+        <section class="form-section form-section-compact" data-step="atendimento">
+          <div class="field" data-field="afterContactRouting">
+            <span class="field-label">Ap&oacute;s contato, atendimento vai para <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="after-contact-me">
+                <input id="after-contact-me" name="afterContactRouting" type="radio" value="Eu">
+                <span>Eu</span>
+              </label>
+              <label class="choice-pill" for="after-contact-team">
+                <input id="after-contact-team" name="afterContactRouting" type="radio" value="Equipe">
                 <span>Equipe</span>
               </label>
-              <label class="choice-pill" for="responder-both">
-                <input id="responder-both" name="responder" type="radio" value="Os dois" required>
-                <span>Os dois</span>
+              <label class="choice-pill" for="after-contact-distributed">
+                <input id="after-contact-distributed" name="afterContactRouting" type="radio" value="Distribu&iacute;do">
+                <span>Distribu&iacute;do</span>
+              </label>
+              <label class="choice-pill" for="after-contact-disorganized">
+                <input id="after-contact-disorganized" name="afterContactRouting" type="radio" value="Sem organiza&ccedil;&atilde;o">
+                <span>Sem organiza&ccedil;&atilde;o</span>
               </label>
             </div>
-            <small class="error" id="responder-error"></small>
+            <small class="error" id="afterContactRouting-error"></small>
           </div>
 
-          <div class="field" data-field="servicePattern">
-            <span class="field-label">Existe um padr&atilde;o de atendimento? <span class="required-mark">*</span></span>
+          <div class="field" data-field="serviceProcess">
+            <span class="field-label">Existe processo definido <span class="required-mark">*</span></span>
             <div class="choice-group">
-              <label class="choice-pill" for="service-pattern-yes">
-                <input id="service-pattern-yes" name="servicePattern" type="radio" value="Sim" required>
+              <label class="choice-pill" for="service-process-yes">
+                <input id="service-process-yes" name="serviceProcess" type="radio" value="Sim">
                 <span>Sim</span>
               </label>
-              <label class="choice-pill" for="service-pattern-no">
-                <input id="service-pattern-no" name="servicePattern" type="radio" value="N&atilde;o" required>
-                <span>N&atilde;o</span>
-              </label>
-              <label class="choice-pill" for="service-pattern-partial">
-                <input id="service-pattern-partial" name="servicePattern" type="radio" value="Parcialmente" required>
+              <label class="choice-pill" for="service-process-partial">
+                <input id="service-process-partial" name="serviceProcess" type="radio" value="Parcialmente">
                 <span>Parcialmente</span>
               </label>
-            </div>
-            <small class="error" id="servicePattern-error"></small>
-          </div>
-
-          <div class="field" data-field="customerQuestions">
-            <label for="customer-questions">Quais s&atilde;o as 3 d&uacute;vidas que os clientes mais fazem? <span class="required-mark">*</span></label>
-            <textarea id="customer-questions" name="customerQuestions" rows="4" placeholder="Ex.: 1) Qual o prazo? 2) Qual o valor? 3) Como funciona a entrega?" required></textarea>
-            <small class="error" id="customerQuestions-error"></small>
-          </div>
-
-          <div class="field" data-field="productUnderstanding">
-            <span class="field-label">O cliente geralmente entende f&aacute;cil o produto? <span class="required-mark">*</span></span>
-            <div class="choice-group">
-              <label class="choice-pill" for="product-understanding-yes">
-                <input id="product-understanding-yes" name="productUnderstanding" type="radio" value="Sim" required>
-                <span>Sim</span>
-              </label>
-              <label class="choice-pill" for="product-understanding-no">
-                <input id="product-understanding-no" name="productUnderstanding" type="radio" value="N&atilde;o" required>
+              <label class="choice-pill" for="service-process-no">
+                <input id="service-process-no" name="serviceProcess" type="radio" value="N&atilde;o">
                 <span>N&atilde;o</span>
               </label>
-              <label class="choice-pill" for="product-understanding-depends">
-                <input id="product-understanding-depends" name="productUnderstanding" type="radio" value="Depende" required>
-                <span>Depende</span>
+            </div>
+            <small class="error" id="serviceProcess-error"></small>
+          </div>
+
+          <div class="field" data-field="serviceScript">
+            <span class="field-label">Existe roteiro de atendimento <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="service-script-yes">
+                <input id="service-script-yes" name="serviceScript" type="radio" value="Sim">
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="service-script-partial">
+                <input id="service-script-partial" name="serviceScript" type="radio" value="Parcialmente">
+                <span>Parcialmente</span>
+              </label>
+              <label class="choice-pill" for="service-script-no">
+                <input id="service-script-no" name="serviceScript" type="radio" value="N&atilde;o">
+                <span>N&atilde;o</span>
               </label>
             </div>
-            <small class="error" id="productUnderstanding-error"></small>
+            <small class="error" id="serviceScript-error"></small>
+          </div>
+
+          <div class="field" data-field="structuredPresentation">
+            <span class="field-label">Cliente recebe apresenta&ccedil;&atilde;o estruturada <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="structured-presentation-yes">
+                <input id="structured-presentation-yes" name="structuredPresentation" type="radio" value="Sim">
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="structured-presentation-partial">
+                <input id="structured-presentation-partial" name="structuredPresentation" type="radio" value="Parcialmente">
+                <span>Parcialmente</span>
+              </label>
+              <label class="choice-pill" for="structured-presentation-no">
+                <input id="structured-presentation-no" name="structuredPresentation" type="radio" value="N&atilde;o">
+                <span>N&atilde;o</span>
+              </label>
+            </div>
+            <small class="error" id="structuredPresentation-error"></small>
+          </div>
+
+          <div class="field" data-field="followUpProcess">
+            <span class="field-label">Existe acompanhamento p&oacute;s-contato <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="follow-up-yes">
+                <input id="follow-up-yes" name="followUpProcess" type="radio" value="Sim">
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="follow-up-sometimes">
+                <input id="follow-up-sometimes" name="followUpProcess" type="radio" value="&Agrave;s vezes">
+                <span>&Agrave;s vezes</span>
+              </label>
+              <label class="choice-pill" for="follow-up-no">
+                <input id="follow-up-no" name="followUpProcess" type="radio" value="N&atilde;o">
+                <span>N&atilde;o</span>
+              </label>
+            </div>
+            <small class="error" id="followUpProcess-error"></small>
+          </div>
+
+          <div class="field" data-field="lostSalesByService">
+            <span class="field-label">J&aacute; perdeu vendas por falha no atendimento <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="lost-sales-service-yes">
+                <input id="lost-sales-service-yes" name="lostSalesByService" type="radio" value="Sim">
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="lost-sales-service-no">
+                <input id="lost-sales-service-no" name="lostSalesByService" type="radio" value="N&atilde;o">
+                <span>N&atilde;o</span>
+              </label>
+              <label class="choice-pill" for="lost-sales-service-unknown">
+                <input id="lost-sales-service-unknown" name="lostSalesByService" type="radio" value="N&atilde;o sabe">
+                <span>N&atilde;o sabe</span>
+              </label>
+            </div>
+            <small class="error" id="lostSalesByService-error"></small>
+          </div>
+
+          <div class="field" data-field="serviceMainProblem">
+            <label for="service-main-problem">Maior problema no atendimento <span class="required-mark">*</span></label>
+            <textarea id="service-main-problem" name="serviceMainProblem" rows="4" placeholder="Descreva a principal dificuldade do atendimento hoje."></textarea>
+            <small class="error" id="serviceMainProblem-error"></small>
           </div>
         </section>
 
@@ -314,8 +1103,8 @@
                 <span>Falta de comunica&ccedil;&atilde;o clara</span>
               </label>
               <label class="choice-pill" for="main-problem-clients">
-                <input id="main-problem-clients" name="mainProblem" type="radio" value="Falta de clientes" required>
-                <span>Falta de clientes</span>
+                <input id="main-problem-clients" name="mainProblem" type="radio" value="Falta de novos clientes" required>
+                <span>Falta de novos clientes</span>
               </label>
               <label class="choice-pill" for="main-problem-other">
                 <input id="main-problem-other" name="mainProblem" type="radio" value="Outro" required>
@@ -324,6 +1113,14 @@
             </div>
             <small class="error" id="mainProblem-error"></small>
           </div>
+
+          <section class="conditional-block is-hidden" data-conditional-block="mainProblemOther">
+            <div class="field" data-field="mainProblemOtherDescription">
+              <label for="main-problem-other-description">Descreva o principal problema <span class="required-mark">*</span></label>
+              <textarea id="main-problem-other-description" name="mainProblemOtherDescription" rows="4" placeholder="Explique qual &eacute; o principal problema do neg&oacute;cio."></textarea>
+              <small class="error" id="mainProblemOtherDescription-error"></small>
+            </div>
+          </section>
 
           <div class="field" data-field="improvementPriority">
             <label for="improvement-priority">Se voc&ecirc; pudesse melhorar uma &uacute;nica coisa no seu neg&oacute;cio hoje, o que seria? <span class="required-mark">*</span></label>
@@ -336,9 +1133,6 @@
             <textarea id="additional-notes" name="additionalNotes" rows="4" placeholder="Alguma informa&ccedil;&atilde;o extra que voc&ecirc; queira compartilhar?"></textarea>
           </div>
         </section>
-
-        <input type="hidden" name="_subject" value="Novo diagn&oacute;stico recebido">
-        <input type="hidden" name="_captcha" value="false">
 
         <div class="form-footer">
           <div class="form-actions">

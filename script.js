@@ -5,7 +5,29 @@ const progressFill = document.getElementById("progress-fill");
 const stepTabs = Array.from(document.querySelectorAll(".step-tab"));
 const sections = Array.from(document.querySelectorAll(".form-section"));
 const submitButtons = Array.from(form.querySelectorAll("button"));
+const SUPABASE_URL = "https://apqevpormksrrdcpdwgt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nZRdfhGhLtsqMPMjoot4_A_2WbTcESy";
 let preserveSuccessMessage = false;
+
+const stepOrder = ["identificacao", "instagram", "atendimento", "vendas"];
+
+function getSelectedChannels() {
+  return Array.from(form.querySelectorAll('input[name="salesChannels"]:checked')).map((input) => input.value);
+}
+
+function visibleWhenChannel(channel) {
+  return () => getSelectedChannels().includes(channel);
+}
+
+function isAutomationDetailVisible() {
+  const selected = form.querySelector('input[name="automationUsage"]:checked');
+  return Boolean(selected && selected.value !== "N\u00e3o utiliza");
+}
+
+function isMainProblemOtherVisible() {
+  const selected = form.querySelector('input[name="mainProblem"]:checked');
+  return Boolean(selected && selected.value === "Outro");
+}
 
 const fields = [
   {
@@ -78,51 +100,330 @@ const fields = [
     step: "instagram"
   },
   {
-    id: "salesChannel",
-    type: "select",
-    message: "Selecione o principal canal de vendas.",
-    step: "instagram"
+    id: "salesChannels",
+    type: "checkbox-group",
+    message: "Selecione pelo menos um canal que gera vendas.",
+    step: "instagram",
+    minSelections: 1
   },
   {
-    id: "instagramUse",
+    id: "instagramObjective",
     type: "radio",
-    message: "Selecione como o Instagram \u00e9 usado hoje.",
-    step: "instagram"
+    message: "Selecione o objetivo principal do Instagram.",
+    step: "instagram",
+    visible: visibleWhenChannel("Instagram")
   },
   {
-    id: "profileClarity",
+    id: "instagramProfileClarity",
     type: "radio",
-    message: "Selecione se o perfil comunica claramente o que voc\u00ea vende.",
-    step: "instagram"
+    message: "Selecione a clareza do perfil no Instagram.",
+    step: "instagram",
+    visible: visibleWhenChannel("Instagram")
   },
   {
-    id: "separateProfile",
+    id: "instagramPostingFrequency",
     type: "radio",
-    message: "Selecione se voc\u00ea j\u00e1 pensou em separar o perfil pessoal do profissional.",
-    step: "instagram"
+    message: "Selecione a frequ\u00eancia de postagem no Instagram.",
+    step: "instagram",
+    visible: visibleWhenChannel("Instagram")
   },
   {
-    id: "responder",
+    id: "instagramContentPattern",
     type: "radio",
-    message: "Selecione quem responde normalmente o cliente.",
-    step: "atendimento"
+    message: "Selecione se existe padr\u00e3o de conte\u00fado no Instagram.",
+    step: "instagram",
+    visible: visibleWhenChannel("Instagram")
   },
   {
-    id: "servicePattern",
+    id: "instagramResultsTracking",
     type: "radio",
-    message: "Selecione se existe um padr\u00e3o de atendimento.",
-    step: "atendimento"
+    message: "Selecione como o Instagram mede resultados.",
+    step: "instagram",
+    visible: visibleWhenChannel("Instagram")
   },
   {
-    id: "customerQuestions",
+    id: "instagramClientInitiates",
+    type: "radio",
+    message: "Selecione se o cliente inicia contato pelo Instagram.",
+    step: "instagram",
+    visible: visibleWhenChannel("Instagram")
+  },
+  {
+    id: "whatsappUse",
+    type: "radio",
+    message: "Selecione como o WhatsApp \u00e9 usado.",
+    step: "instagram",
+    visible: visibleWhenChannel("WhatsApp")
+  },
+  {
+    id: "whatsappProcess",
+    type: "radio",
+    message: "Selecione se existe processo no WhatsApp.",
+    step: "instagram",
+    visible: visibleWhenChannel("WhatsApp")
+  },
+  {
+    id: "whatsappFirstContact",
+    type: "radio",
+    message: "Selecione como \u00e9 o primeiro contato no WhatsApp.",
+    step: "instagram",
+    visible: visibleWhenChannel("WhatsApp")
+  },
+  {
+    id: "whatsappResponseTime",
+    type: "radio",
+    message: "Selecione o tempo de resposta no WhatsApp.",
+    step: "instagram",
+    visible: visibleWhenChannel("WhatsApp")
+  },
+  {
+    id: "whatsappConversionStrategy",
+    type: "radio",
+    message: "Selecione a estrat\u00e9gia de convers\u00e3o no WhatsApp.",
+    step: "instagram",
+    visible: visibleWhenChannel("WhatsApp")
+  },
+  {
+    id: "whatsappLosesClients",
+    type: "radio",
+    message: "Selecione se perde clientes ap\u00f3s contato no WhatsApp.",
+    step: "instagram",
+    visible: visibleWhenChannel("WhatsApp")
+  },
+  {
+    id: "facebookResults",
+    type: "radio",
+    message: "Selecione o resultado gerado pelo Facebook.",
+    step: "instagram",
+    visible: visibleWhenChannel("Facebook")
+  },
+  {
+    id: "facebookPostingFrequency",
+    type: "radio",
+    message: "Selecione a frequ\u00eancia de postagem no Facebook.",
+    step: "instagram",
+    visible: visibleWhenChannel("Facebook")
+  },
+  {
+    id: "facebookAdsUsage",
+    type: "radio",
+    message: "Selecione o uso de an\u00fancios no Facebook.",
+    step: "instagram",
+    visible: visibleWhenChannel("Facebook")
+  },
+  {
+    id: "tiktokUse",
+    type: "radio",
+    message: "Selecione como o TikTok \u00e9 usado.",
+    step: "instagram",
+    visible: visibleWhenChannel("TikTok")
+  },
+  {
+    id: "tiktokFrequency",
+    type: "radio",
+    message: "Selecione a frequ\u00eancia no TikTok.",
+    step: "instagram",
+    visible: visibleWhenChannel("TikTok")
+  },
+  {
+    id: "tiktokHighReach",
+    type: "radio",
+    message: "Selecione se j\u00e1 teve alcance alto no TikTok.",
+    step: "instagram",
+    visible: visibleWhenChannel("TikTok")
+  },
+  {
+    id: "tiktokDirectsChannel",
+    type: "radio",
+    message: "Selecione se o TikTok direciona para outro canal.",
+    step: "instagram",
+    visible: visibleWhenChannel("TikTok")
+  },
+  {
+    id: "googleSearchPresence",
+    type: "radio",
+    message: "Selecione se aparece em pesquisas.",
+    step: "instagram",
+    visible: visibleWhenChannel("Google / Pesquisa")
+  },
+  {
+    id: "googleBusinessProfile",
+    type: "radio",
+    message: "Selecione se possui Google Meu Neg\u00f3cio.",
+    step: "instagram",
+    visible: visibleWhenChannel("Google / Pesquisa")
+  },
+  {
+    id: "googleReceivesContacts",
+    type: "radio",
+    message: "Selecione se recebe contatos pelo Google.",
+    step: "instagram",
+    visible: visibleWhenChannel("Google / Pesquisa")
+  },
+  {
+    id: "googleHasReviews",
+    type: "radio",
+    message: "Selecione se possui avalia\u00e7\u00f5es no Google.",
+    step: "instagram",
+    visible: visibleWhenChannel("Google / Pesquisa")
+  },
+  {
+    id: "referralImportance",
+    type: "radio",
+    message: "Selecione a import\u00e2ncia da indica\u00e7\u00e3o.",
+    step: "instagram",
+    visible: visibleWhenChannel("Indica\u00e7\u00e3o")
+  },
+  {
+    id: "referralEncourages",
+    type: "radio",
+    message: "Selecione se incentiva indica\u00e7\u00e3o.",
+    step: "instagram",
+    visible: visibleWhenChannel("Indica\u00e7\u00e3o")
+  },
+  {
+    id: "referralProcess",
+    type: "radio",
+    message: "Selecione se existe processo de indica\u00e7\u00e3o.",
+    step: "instagram",
+    visible: visibleWhenChannel("Indica\u00e7\u00e3o")
+  },
+  {
+    id: "storeFlow",
+    type: "radio",
+    message: "Selecione o fluxo da loja f\u00edsica.",
+    step: "instagram",
+    visible: visibleWhenChannel("Loja f\u00edsica")
+  },
+  {
+    id: "storeProductClarity",
+    type: "radio",
+    message: "Selecione se o cliente entende o produto na loja f\u00edsica.",
+    step: "instagram",
+    visible: visibleWhenChannel("Loja f\u00edsica")
+  },
+  {
+    id: "storeVisualOrganization",
+    type: "radio",
+    message: "Selecione a organiza\u00e7\u00e3o visual da loja f\u00edsica.",
+    step: "instagram",
+    visible: visibleWhenChannel("Loja f\u00edsica")
+  },
+  {
+    id: "websiteOutcome",
+    type: "radio",
+    message: "Selecione o que o site pr\u00f3prio gera.",
+    step: "instagram",
+    visible: visibleWhenChannel("Site pr\u00f3prio")
+  },
+  {
+    id: "websiteClearInformation",
+    type: "radio",
+    message: "Selecione se o site possui informa\u00e7\u00f5es claras.",
+    step: "instagram",
+    visible: visibleWhenChannel("Site pr\u00f3prio")
+  },
+  {
+    id: "marketplacePlatforms",
     type: "textarea",
-    message: "Informe as 3 d\u00favidas que os clientes mais fazem.",
+    message: "Informe quais marketplaces usa.",
+    step: "instagram",
+    visible: visibleWhenChannel("Marketplace")
+  },
+  {
+    id: "marketplaceSalesFrequency",
+    type: "radio",
+    message: "Selecione a frequ\u00eancia de vendas no marketplace.",
+    step: "instagram",
+    visible: visibleWhenChannel("Marketplace")
+  },
+  {
+    id: "marketplaceStrategy",
+    type: "radio",
+    message: "Selecione se existe estrat\u00e9gia no marketplace.",
+    step: "instagram",
+    visible: visibleWhenChannel("Marketplace")
+  },
+  {
+    id: "otherChannelName",
+    type: "input",
+    message: "Informe qual \u00e9 o outro canal.",
+    step: "instagram",
+    visible: visibleWhenChannel("Outro")
+  },
+  {
+    id: "otherChannelHowWorks",
+    type: "textarea",
+    message: "Explique como o outro canal funciona.",
+    step: "instagram",
+    visible: visibleWhenChannel("Outro")
+  },
+  {
+    id: "otherChannelDifficulty",
+    type: "textarea",
+    message: "Informe a dificuldade do outro canal.",
+    step: "instagram",
+    visible: visibleWhenChannel("Outro")
+  },
+  {
+    id: "firstContactType",
+    type: "radio",
+    message: "Selecione como acontece o primeiro contato do cliente.",
     step: "atendimento"
   },
   {
-    id: "productUnderstanding",
+    id: "automationUsage",
     type: "radio",
-    message: "Selecione se o cliente entende facilmente o produto.",
+    message: "Selecione o uso de automa\u00e7\u00e3o.",
+    step: "atendimento"
+  },
+  {
+    id: "automationType",
+    type: "input",
+    message: "Informe o tipo de automa\u00e7\u00e3o.",
+    step: "atendimento",
+    visible: isAutomationDetailVisible
+  },
+  {
+    id: "afterContactRouting",
+    type: "radio",
+    message: "Selecione para onde vai o atendimento ap\u00f3s o contato.",
+    step: "atendimento"
+  },
+  {
+    id: "serviceProcess",
+    type: "radio",
+    message: "Selecione se existe processo definido de atendimento.",
+    step: "atendimento"
+  },
+  {
+    id: "serviceScript",
+    type: "radio",
+    message: "Selecione se existe roteiro de atendimento.",
+    step: "atendimento"
+  },
+  {
+    id: "structuredPresentation",
+    type: "radio",
+    message: "Selecione se o cliente recebe apresenta\u00e7\u00e3o estruturada.",
+    step: "atendimento"
+  },
+  {
+    id: "followUpProcess",
+    type: "radio",
+    message: "Selecione se existe acompanhamento p\u00f3s-contato.",
+    step: "atendimento"
+  },
+  {
+    id: "lostSalesByService",
+    type: "radio",
+    message: "Selecione se j\u00e1 perdeu vendas por falha no atendimento.",
+    step: "atendimento"
+  },
+  {
+    id: "serviceMainProblem",
+    type: "textarea",
+    message: "Informe o maior problema no atendimento.",
     step: "atendimento"
   },
   {
@@ -138,6 +439,13 @@ const fields = [
     step: "vendas"
   },
   {
+    id: "mainProblemOtherDescription",
+    type: "textarea",
+    message: "Descreva o principal problema.",
+    step: "vendas",
+    visible: isMainProblemOtherVisible
+  },
+  {
     id: "improvementPriority",
     type: "textarea",
     message: "Informe o que voc\u00ea melhoraria primeiro no neg\u00f3cio.",
@@ -145,17 +453,19 @@ const fields = [
   }
 ];
 
-const stepOrder = ["identificacao", "instagram", "atendimento", "vendas"];
+const fieldMap = new Map(fields.map((field) => [field.id, field]));
 
 function getFieldElements(field) {
-  if (field.type === "radio") {
-    return Array.from(form.querySelectorAll(`input[name="${field.id}"]`));
+  const fieldName = field.name || field.id;
+
+  if (field.type === "radio" || field.type === "checkbox-group") {
+    return Array.from(form.querySelectorAll(`input[name="${fieldName}"]`));
   }
 
   const selectors = {
-    input: `input[name="${field.id}"]`,
-    select: `select[name="${field.id}"]`,
-    textarea: `textarea[name="${field.id}"]`
+    input: `input[name="${fieldName}"]`,
+    select: `select[name="${fieldName}"]`,
+    textarea: `textarea[name="${fieldName}"]`
   };
 
   return [form.querySelector(selectors[field.type])];
@@ -165,11 +475,29 @@ function getFieldContainer(field) {
   return form.querySelector(`.field[data-field="${field.id}"]`);
 }
 
+function isFieldVisible(field) {
+  if (typeof field.visible === "function" && !field.visible()) {
+    return false;
+  }
+
+  const container = getFieldContainer(field);
+  return Boolean(container) && !container.closest(".is-hidden");
+}
+
 function isFieldComplete(field) {
+  if (!isFieldVisible(field)) {
+    return true;
+  }
+
   const elements = getFieldElements(field);
 
   if (field.type === "radio") {
     return elements.some((input) => input.checked);
+  }
+
+  if (field.type === "checkbox-group") {
+    const checkedCount = elements.filter((input) => input.checked).length;
+    return checkedCount >= (field.minSelections || 1);
   }
 
   const [element] = elements;
@@ -217,6 +545,57 @@ function clearAllErrors() {
   fields.forEach((field) => clearError(field));
 }
 
+function clearFieldsInContainer(container) {
+  container.querySelectorAll("input, select, textarea").forEach((element) => {
+    if (element.type === "radio" || element.type === "checkbox") {
+      element.checked = false;
+      return;
+    }
+
+    element.value = "";
+  });
+
+  container.querySelectorAll(".field[data-field]").forEach((fieldElement) => {
+    const field = fieldMap.get(fieldElement.dataset.field);
+    if (field) {
+      clearError(field);
+    }
+  });
+}
+
+function setBlockVisibility(block, shouldShow) {
+  if (!block) {
+    return;
+  }
+
+  const isHidden = block.classList.contains("is-hidden");
+
+  if (shouldShow) {
+    block.classList.remove("is-hidden");
+    return;
+  }
+
+  if (!isHidden) {
+    clearFieldsInContainer(block);
+  }
+
+  block.classList.add("is-hidden");
+}
+
+function syncConditionalBlocks() {
+  const selectedChannels = getSelectedChannels();
+
+  document.querySelectorAll("[data-channel-block]").forEach((block) => {
+    setBlockVisibility(block, selectedChannels.includes(block.dataset.channelBlock));
+  });
+
+  const automationBlock = document.querySelector('[data-conditional-block="automationType"]');
+  setBlockVisibility(automationBlock, isAutomationDetailVisible());
+
+  const mainProblemOtherBlock = document.querySelector('[data-conditional-block="mainProblemOther"]');
+  setBlockVisibility(mainProblemOtherBlock, isMainProblemOtherVisible());
+}
+
 function setSubmitButtonsDisabled(isDisabled) {
   submitButtons.forEach((button) => {
     button.disabled = isDisabled;
@@ -242,33 +621,120 @@ function setStatus(message = "", type = "success") {
   }
 }
 
-async function readResponsePayload(response) {
-  const contentType = response.headers.get("content-type") || "";
+function getFieldSingleValue(name) {
+  const elements = Array.from(form.querySelectorAll(`[name="${name}"]`));
 
-  if (contentType.includes("application/json")) {
-    return response.json();
+  if (elements.length === 0) {
+    return "";
   }
 
-  return response.text();
+  const [firstElement] = elements;
+
+  if (firstElement.type === "radio") {
+    const checkedElement = elements.find((element) => element.checked);
+    return checkedElement ? checkedElement.value : "";
+  }
+
+  if (firstElement.type === "checkbox") {
+    return elements.filter((element) => element.checked).map((element) => element.value);
+  }
+
+  return firstElement.value.trim();
 }
 
-function getErrorMessage(payload, fallbackMessage) {
-  if (payload && typeof payload === "object" && Array.isArray(payload.errors) && payload.errors.length > 0) {
-    return payload.errors.map((error) => error.message).join(" ");
-  }
+function getCanaisSelecionados() {
+  return Array.from(form.querySelectorAll('input[name="salesChannels"]:checked')).map((input) => input.value);
+}
 
-  if (typeof payload === "string" && payload.trim()) {
-    return payload.trim();
-  }
+function coletarRespostas() {
+  const respostas = {};
 
-  return fallbackMessage;
+  Array.from(form.querySelectorAll("input, select, textarea")).forEach((element) => {
+    const { name, type } = element;
+
+    if (!name || type === "submit" || type === "reset" || type === "button") {
+      return;
+    }
+
+    if (type === "radio") {
+      if (element.checked) {
+        respostas[name] = element.value;
+      } else if (!(name in respostas)) {
+        respostas[name] = "";
+      }
+      return;
+    }
+
+    if (type === "checkbox") {
+      if (!Array.isArray(respostas[name])) {
+        respostas[name] = [];
+      }
+
+      if (element.checked) {
+        respostas[name].push(element.value);
+      }
+      return;
+    }
+
+    respostas[name] = element.value.trim();
+  });
+
+  return respostas;
+}
+
+async function enviarFormulario(dados) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/diagnosticos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`
+    },
+    body: JSON.stringify(dados)
+  });
+
+  if (!response.ok) {
+    let errorMessage = "Erro ao enviar. Tente novamente.";
+
+    try {
+      const errorPayload = await response.json();
+      errorMessage = errorPayload.message || errorPayload.error_description || errorPayload.details || errorMessage;
+      console.error("Falha ao inserir diagn\u00f3stico no Supabase", {
+        status: response.status,
+        payload: errorPayload
+      });
+    } catch (error) {
+      console.error("Falha ao inserir diagn\u00f3stico no Supabase", {
+        status: response.status
+      });
+    }
+
+    throw new Error(errorMessage);
+  }
 }
 
 function validateField(field) {
+  if (!isFieldVisible(field)) {
+    clearError(field);
+    return true;
+  }
+
   const elements = getFieldElements(field);
 
   if (field.type === "radio") {
-    if (!isFieldComplete(field)) {
+    if (!elements.some((input) => input.checked)) {
+      setError(field, field.message);
+      return false;
+    }
+
+    clearError(field);
+    return true;
+  }
+
+  if (field.type === "checkbox-group") {
+    const checkedCount = elements.filter((input) => input.checked).length;
+
+    if (checkedCount < (field.minSelections || 1)) {
       setError(field, field.message);
       return false;
     }
@@ -294,16 +760,17 @@ function validateField(field) {
 }
 
 function updateProgress() {
-  const completed = fields.filter(isFieldComplete).length;
-  const percentage = Math.round((completed / fields.length) * 100);
+  const activeFields = fields.filter(isFieldVisible);
+  const completed = activeFields.filter(isFieldComplete).length;
+  const percentage = activeFields.length > 0 ? Math.round((completed / activeFields.length) * 100) : 0;
 
   progressValue.textContent = `${percentage}%`;
   progressFill.style.width = `${percentage}%`;
 
   stepOrder.forEach((stepId) => {
     const tab = document.querySelector(`[data-step-target="${stepId}"]`);
-    const stepFields = fields.filter((field) => field.step === stepId);
-    const stepCompleted = stepFields.every(isFieldComplete);
+    const stepFields = fields.filter((field) => field.step === stepId && isFieldVisible(field));
+    const stepCompleted = stepFields.length > 0 && stepFields.every(isFieldComplete);
 
     if (tab) {
       tab.classList.toggle("is-complete", stepCompleted);
@@ -343,8 +810,13 @@ fields.forEach((field) => {
   const elements = getFieldElements(field);
 
   elements.forEach((element) => {
-    const eventName = field.type === "radio" || field.type === "select" ? "change" : "input";
+    const eventName = field.type === "radio" || field.type === "select" || field.type === "checkbox-group" ? "change" : "input";
+
     element.addEventListener(eventName, () => {
+      if (field.id === "salesChannels" || field.id === "automationUsage" || field.id === "mainProblem") {
+        syncConditionalBlocks();
+      }
+
       validateField(field);
       updateProgress();
     });
@@ -370,6 +842,7 @@ window.addEventListener("scroll", () => {
 form.addEventListener("reset", () => {
   window.setTimeout(() => {
     clearAllErrors();
+    syncConditionalBlocks();
     if (!preserveSuccessMessage) {
       setStatus("");
     }
@@ -383,7 +856,8 @@ form.addEventListener("reset", () => {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const isValid = fields.every(validateField);
+  const visibleFields = fields.filter(isFieldVisible);
+  const isValid = visibleFields.every(validateField);
   updateProgress();
 
   if (!isValid) {
@@ -396,35 +870,37 @@ form.addEventListener("submit", async (event) => {
   setStatus("Enviando diagn\u00f3stico...", "loading");
 
   try {
-    const response = await fetch(form.action, {
-      method: "POST",
-      body: new FormData(form),
-      headers: {
-        Accept: "application/json"
-      }
-    });
+    const canaisSelecionados = getCanaisSelecionados();
+    const respostas = coletarRespostas();
+    const dados = {
+      nome_responsavel: getFieldSingleValue("name"),
+      nome_empresa: getFieldSingleValue("company"),
+      email: getFieldSingleValue("email"),
+      telefone: getFieldSingleValue("phoneWhatsApp"),
+      cidade_estado: getFieldSingleValue("cityState"),
+      rede_social: getFieldSingleValue("mainSocialNetworkName"),
+      link_rede: getFieldSingleValue("mainSocialNetworkLink"),
+      site: getFieldSingleValue("website") || null,
+      cargo: getFieldSingleValue("role"),
+      equipe_vendas: Number(getFieldSingleValue("salesTeamSize")),
+      produtos: getFieldSingleValue("topProducts"),
+      canais: JSON.stringify(canaisSelecionados),
+      respostas
+    };
 
-    const payload = await readResponsePayload(response);
+    await enviarFormulario(dados);
 
-    if (!response.ok) {
-      const message = getErrorMessage(payload, "N\u00e3o foi poss\u00edvel enviar o diagn\u00f3stico.");
-      console.error("Falha ao enviar formul\u00e1rio", {
-        status: response.status,
-        payload
-      });
-      throw new Error(message);
-    }
-
-    setStatus("Diagn\u00f3stico enviado com sucesso.");
+    setStatus("Diagn\u00f3stico enviado com sucesso");
     preserveSuccessMessage = true;
     form.reset();
   } catch (error) {
-    console.error("Erro ao enviar formul\u00e1rio", error);
-    setStatus(error.message || "Erro ao enviar. Tente novamente.", "error");
+    console.error("Erro ao enviar diagn\u00f3stico", error);
+    setStatus("Erro ao enviar. Tente novamente.", "error");
   } finally {
     setSubmitButtonsDisabled(false);
   }
 });
 
+syncConditionalBlocks();
 updateProgress();
 setActiveStep(stepOrder[0]);

@@ -378,6 +378,21 @@ select {
   color: var(--error);
 }
 
+.char-counter {
+  justify-self: end;
+  min-height: 1em;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.char-counter.is-warning {
+  color: #8b5b16;
+}
+
+.char-counter.is-limit {
+  color: var(--error);
+}
+
 .form-footer {
   display: grid;
   gap: 12px;

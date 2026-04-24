@@ -75,6 +75,15 @@ const fields = [
     validator: (element) => element.validity.valid
   },
   {
+    id: "website",
+    type: "input",
+    message: "Informe um link v\u00e1lido do site da empresa.",
+    step: "identificacao",
+    optional: true,
+    trackProgress: false,
+    validator: (element) => element.validity.valid
+  },
+  {
     id: "role",
     type: "input",
     message: "Informe o cargo ou fun\u00e7\u00e3o do respons\u00e1vel.",
@@ -451,6 +460,14 @@ const fields = [
     type: "textarea",
     message: "Informe o que voc\u00ea melhoraria primeiro no neg\u00f3cio.",
     step: "vendas"
+  },
+  {
+    id: "additionalNotes",
+    type: "textarea",
+    message: "Mantenha as observa\u00e7\u00f5es dentro do limite permitido.",
+    step: "vendas",
+    optional: true,
+    trackProgress: false
   }
 ];
 
@@ -474,6 +491,106 @@ function getFieldElements(field) {
 
 function getFieldContainer(field) {
   return form.querySelector(`.field[data-field="${field.id}"]`);
+}
+
+function getElementMaxLength(element) {
+  return typeof element.maxLength === "number" && element.maxLength > 0 ? element.maxLength : null;
+}
+
+function getFieldLimitMessage(maxLength) {
+  return `Mantenha a resposta em at\u00e9 ${maxLength} caracteres.`;
+}
+
+function setElementError(element, message) {
+  const container = element.closest(".field[data-field]");
+  const error = container ? container.querySelector(".error") : null;
+
+  if (!container || !error) {
+    return;
+  }
+
+  container.classList.add("invalid");
+  error.textContent = message;
+}
+
+function clearElementError(element) {
+  const container = element.closest(".field[data-field]");
+  const error = container ? container.querySelector(".error") : null;
+
+  if (!container || !error) {
+    return;
+  }
+
+  container.classList.remove("invalid");
+  error.textContent = "";
+}
+
+function validateElementLength(element, field = null) {
+  const maxLength = getElementMaxLength(element);
+
+  if (!maxLength) {
+    return true;
+  }
+
+  if (element.value.length > maxLength) {
+    const message = getFieldLimitMessage(maxLength);
+
+    if (field) {
+      setError(field, message);
+    } else {
+      setElementError(element, message);
+    }
+
+    return false;
+  }
+
+  return true;
+}
+
+function getCharacterCounter(textarea) {
+  const field = textarea.closest(".field");
+  return field ? field.querySelector(".char-counter") : null;
+}
+
+function updateCharacterCounter(textarea) {
+  const counter = getCharacterCounter(textarea);
+  const maxLength = getElementMaxLength(textarea);
+
+  if (!counter || !maxLength) {
+    return;
+  }
+
+  const currentLength = textarea.value.length;
+  counter.textContent = `${currentLength}/${maxLength}`;
+  counter.classList.toggle("is-warning", currentLength >= Math.max(maxLength - 60, Math.floor(maxLength * 0.9)));
+  counter.classList.toggle("is-limit", currentLength > maxLength);
+}
+
+function initCharacterCounters() {
+  form.querySelectorAll("textarea[maxlength]").forEach((textarea) => {
+    const field = textarea.closest(".field");
+
+    if (!field) {
+      return;
+    }
+
+    let counter = field.querySelector(".char-counter");
+
+    if (!counter) {
+      counter = document.createElement("small");
+      counter.className = "char-counter";
+      const error = field.querySelector(".error");
+
+      if (error) {
+        field.insertBefore(counter, error);
+      } else {
+        field.append(counter);
+      }
+    }
+
+    counter.setAttribute("aria-live", "polite");
+    updateCharacterCounter(textarea);
+  });
 }
 
 function isFieldVisible(field) {
@@ -508,6 +625,10 @@ function isFieldComplete(field) {
 
   const hasValue = Boolean(element.value.trim());
   if (!hasValue) {
+    return Boolean(field.optional);
+  }
+
+  if (!validateElementLength(element, field)) {
     return false;
   }
 
@@ -554,6 +675,10 @@ function clearFieldsInContainer(container) {
     }
 
     element.value = "";
+
+    if (element.tagName === "TEXTAREA") {
+      updateCharacterCounter(element);
+    }
   });
 
   container.querySelectorAll(".field[data-field]").forEach((fieldElement) => {
@@ -746,8 +871,22 @@ function validateField(field) {
 
   const [element] = elements;
 
-  if (!element || !element.value.trim()) {
+  if (!element) {
     setError(field, field.message);
+    return false;
+  }
+
+  if (!element.value.trim()) {
+    if (field.optional) {
+      clearError(field);
+      return true;
+    }
+
+    setError(field, field.message);
+    return false;
+  }
+
+  if (!validateElementLength(element, field)) {
     return false;
   }
 
@@ -761,7 +900,7 @@ function validateField(field) {
 }
 
 function updateProgress() {
-  const activeFields = fields.filter(isFieldVisible);
+  const activeFields = fields.filter((field) => field.trackProgress !== false && isFieldVisible(field));
   const completed = activeFields.filter(isFieldComplete).length;
   const percentage = activeFields.length > 0 ? Math.round((completed / activeFields.length) * 100) : 0;
 
@@ -770,7 +909,7 @@ function updateProgress() {
 
   stepOrder.forEach((stepId) => {
     const tab = document.querySelector(`[data-step-target="${stepId}"]`);
-    const stepFields = fields.filter((field) => field.step === stepId && isFieldVisible(field));
+    const stepFields = fields.filter((field) => field.trackProgress !== false && field.step === stepId && isFieldVisible(field));
     const stepCompleted = stepFields.length > 0 && stepFields.every(isFieldComplete);
 
     if (tab) {
@@ -818,6 +957,10 @@ fields.forEach((field) => {
         syncConditionalBlocks();
       }
 
+      if (field.type === "textarea") {
+        updateCharacterCounter(element);
+      }
+
       validateField(field);
       updateProgress();
     });
@@ -844,6 +987,9 @@ form.addEventListener("reset", () => {
   window.setTimeout(() => {
     clearAllErrors();
     syncConditionalBlocks();
+    form.querySelectorAll("textarea[maxlength]").forEach((textarea) => {
+      updateCharacterCounter(textarea);
+    });
     if (!preserveSuccessMessage) {
       setStatus("");
     }
@@ -903,5 +1049,6 @@ form.addEventListener("submit", async (event) => {
 });
 
 syncConditionalBlocks();
+initCharacterCounters();
 updateProgress();
 setActiveStep(stepOrder[0]);

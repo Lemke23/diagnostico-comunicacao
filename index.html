@@ -53,13 +53,13 @@
           <div class="field-grid">
             <div class="field" data-field="name">
               <label for="name">Nome do respons&aacute;vel <span class="required-mark">*</span></label>
-              <input id="name" name="name" type="text" placeholder="Ex.: Maria Silva" required>
+              <input id="name" name="name" type="text" maxlength="80" placeholder="Ex.: Maria Silva" required>
               <small class="error" id="name-error"></small>
             </div>
 
             <div class="field" data-field="company">
               <label for="company">Nome da empresa <span class="required-mark">*</span></label>
-              <input id="company" name="company" type="text" placeholder="Ex.: Studio Criativo Ltda." required>
+              <input id="company" name="company" type="text" maxlength="100" placeholder="Ex.: Studio Criativo Ltda." required>
               <small class="error" id="company-error"></small>
             </div>
           </div>
@@ -67,13 +67,13 @@
           <div class="field-grid">
             <div class="field" data-field="email">
               <label for="email">E-mail <span class="required-mark">*</span></label>
-              <input id="email" name="email" type="email" placeholder="Ex.: contato@empresa.com" required>
+              <input id="email" name="email" type="email" maxlength="120" placeholder="Ex.: contato@empresa.com" required>
               <small class="error" id="email-error"></small>
             </div>
 
             <div class="field" data-field="phoneWhatsApp">
               <label for="phone-whatsapp">Telefone / WhatsApp <span class="required-mark">*</span></label>
-              <input id="phone-whatsapp" name="phoneWhatsApp" type="tel" placeholder="Ex.: (11) 99999-9999" required>
+              <input id="phone-whatsapp" name="phoneWhatsApp" type="tel" maxlength="30" placeholder="Ex.: (11) 99999-9999" required>
               <small class="error" id="phoneWhatsApp-error"></small>
             </div>
           </div>
@@ -81,13 +81,13 @@
           <div class="field-grid">
             <div class="field" data-field="cityState">
               <label for="city-state">Cidade e Estado <span class="required-mark">*</span></label>
-              <input id="city-state" name="cityState" type="text" placeholder="Ex.: S&atilde;o Paulo, SP" required>
+              <input id="city-state" name="cityState" type="text" maxlength="80" placeholder="Ex.: S&atilde;o Paulo, SP" required>
               <small class="error" id="cityState-error"></small>
             </div>
 
             <div class="field" data-field="role">
               <label for="role">Cargo/fun&ccedil;&atilde;o do respons&aacute;vel <span class="required-mark">*</span></label>
-              <input id="role" name="role" type="text" placeholder="Ex.: propriet&aacute;rio, gestor comercial, vendedor" required>
+              <input id="role" name="role" type="text" maxlength="80" placeholder="Ex.: propriet&aacute;rio, gestor comercial, vendedor" required>
               <small class="error" id="role-error"></small>
             </div>
           </div>
@@ -95,21 +95,22 @@
           <div class="field-grid">
             <div class="field" data-field="mainSocialNetworkName">
               <label for="main-social-network-name">Nome da rede social principal <span class="required-mark">*</span></label>
-              <input id="main-social-network-name" name="mainSocialNetworkName" type="text" placeholder="Ex.: Instagram, TikTok, Facebook" required>
+              <input id="main-social-network-name" name="mainSocialNetworkName" type="text" maxlength="80" placeholder="Ex.: Instagram, TikTok, Facebook" required>
               <small class="error" id="mainSocialNetworkName-error"></small>
             </div>
 
             <div class="field" data-field="mainSocialNetworkLink">
               <label for="main-social-network-link">Link da rede social principal <span class="required-mark">*</span></label>
-              <input id="main-social-network-link" name="mainSocialNetworkLink" type="url" placeholder="Ex.: https://instagram.com/seuperfil" required>
+              <input id="main-social-network-link" name="mainSocialNetworkLink" type="url" maxlength="200" placeholder="Ex.: https://instagram.com/seuperfil" required>
               <small class="error" id="mainSocialNetworkLink-error"></small>
             </div>
           </div>
 
           <div class="field-grid">
-            <div class="field">
+            <div class="field" data-field="website">
               <label for="website">Site da empresa, se houver</label>
-              <input id="website" name="website" type="url" placeholder="Ex.: https://suaempresa.com.br">
+              <input id="website" name="website" type="url" maxlength="200" placeholder="Ex.: https://suaempresa.com.br">
+              <small class="error" id="website-error"></small>
             </div>
 
             <div class="field" data-field="salesTeamSize">
@@ -147,7 +148,7 @@
 
           <div class="field" data-field="topProducts">
             <label for="top-products">Quais produtos voc&ecirc; mais vende atualmente? <span class="required-mark">*</span></label>
-            <textarea id="top-products" name="topProducts" rows="4" placeholder="Liste os principais produtos ou servi&ccedil;os." required></textarea>
+            <textarea id="top-products" name="topProducts" rows="4" maxlength="500" placeholder="Liste os principais produtos ou servi&ccedil;os de forma objetiva." required></textarea>
             <small class="error" id="topProducts-error"></small>
           </div>
 
@@ -830,7 +831,7 @@
             <div class="field-grid">
               <div class="field" data-field="marketplacePlatforms">
                 <label for="marketplace-platforms">Quais usa <span class="required-mark">*</span></label>
-                <textarea id="marketplace-platforms" name="marketplacePlatforms" rows="3" placeholder="Ex.: Mercado Livre, Shopee, Amazon"></textarea>
+                <textarea id="marketplace-platforms" name="marketplacePlatforms" rows="3" maxlength="300" placeholder="Informe apenas os marketplaces principais. Ex.: Mercado Livre, Shopee, Amazon."></textarea>
                 <small class="error" id="marketplacePlatforms-error"></small>
               </div>
 
@@ -877,19 +878,19 @@
             <div class="field-grid">
               <div class="field" data-field="otherChannelName">
                 <label for="other-channel-name">Qual canal <span class="required-mark">*</span></label>
-                <input id="other-channel-name" name="otherChannelName" type="text" placeholder="Ex.: Telegram, e-mail marketing, panfleto">
+                <input id="other-channel-name" name="otherChannelName" type="text" maxlength="80" placeholder="Ex.: Telegram, e-mail marketing, panfleto">
                 <small class="error" id="otherChannelName-error"></small>
               </div>
 
               <div class="field" data-field="otherChannelHowWorks">
                 <label for="other-channel-how-works">Como funciona <span class="required-mark">*</span></label>
-                <textarea id="other-channel-how-works" name="otherChannelHowWorks" rows="3" placeholder="Explique como esse canal gera contato ou vendas."></textarea>
+                <textarea id="other-channel-how-works" name="otherChannelHowWorks" rows="3" maxlength="500" placeholder="Explique em poucas linhas como esse canal gera contato ou vendas."></textarea>
                 <small class="error" id="otherChannelHowWorks-error"></small>
               </div>
 
               <div class="field" data-field="otherChannelDifficulty">
                 <label for="other-channel-difficulty">Dificuldade <span class="required-mark">*</span></label>
-                <textarea id="other-channel-difficulty" name="otherChannelDifficulty" rows="3" placeholder="Descreva a principal dificuldade desse canal."></textarea>
+                <textarea id="other-channel-difficulty" name="otherChannelDifficulty" rows="3" maxlength="500" placeholder="Descreva objetivamente a principal dificuldade desse canal."></textarea>
                 <small class="error" id="otherChannelDifficulty-error"></small>
               </div>
             </div>
@@ -948,7 +949,7 @@
         <section class="conditional-block is-hidden" data-conditional-block="automationType">
           <div class="field" data-field="automationType">
             <label for="automation-type">Tipo de automa&ccedil;&atilde;o <span class="required-mark">*</span></label>
-            <input id="automation-type" name="automationType" type="text" placeholder="Ex.: chatbot no WhatsApp, respostas autom&aacute;ticas, CRM">
+            <input id="automation-type" name="automationType" type="text" maxlength="120" placeholder="Ex.: chatbot no WhatsApp, respostas autom&aacute;ticas, CRM">
             <small class="error" id="automationType-error"></small>
           </div>
         </section>
@@ -1074,7 +1075,7 @@
 
           <div class="field" data-field="serviceMainProblem">
             <label for="service-main-problem">Maior problema no atendimento <span class="required-mark">*</span></label>
-            <textarea id="service-main-problem" name="serviceMainProblem" rows="4" placeholder="Descreva a principal dificuldade do atendimento hoje."></textarea>
+            <textarea id="service-main-problem" name="serviceMainProblem" rows="4" maxlength="700" placeholder="Descreva objetivamente a principal dificuldade do atendimento hoje."></textarea>
             <small class="error" id="serviceMainProblem-error"></small>
           </div>
         </section>
@@ -1087,7 +1088,7 @@
 
           <div class="field" data-field="salesDifficulty">
             <label for="sales-difficulty">O que mais dificulta fechar uma venda hoje? <span class="required-mark">*</span></label>
-            <textarea id="sales-difficulty" name="salesDifficulty" rows="4" placeholder="Compartilhe os principais obst&aacute;culos no fechamento." required></textarea>
+            <textarea id="sales-difficulty" name="salesDifficulty" rows="4" maxlength="700" placeholder="Compartilhe os principais obst&aacute;culos no fechamento de forma objetiva." required></textarea>
             <small class="error" id="salesDifficulty-error"></small>
           </div>
 
@@ -1117,20 +1118,21 @@
           <section class="conditional-block is-hidden" data-conditional-block="mainProblemOther">
             <div class="field" data-field="mainProblemOtherDescription">
               <label for="main-problem-other-description">Descreva o principal problema <span class="required-mark">*</span></label>
-              <textarea id="main-problem-other-description" name="mainProblemOtherDescription" rows="4" placeholder="Explique qual &eacute; o principal problema do neg&oacute;cio."></textarea>
+              <textarea id="main-problem-other-description" name="mainProblemOtherDescription" rows="4" maxlength="700" placeholder="Explique objetivamente qual &eacute; o principal problema do neg&oacute;cio."></textarea>
               <small class="error" id="mainProblemOtherDescription-error"></small>
             </div>
           </section>
 
           <div class="field" data-field="improvementPriority">
             <label for="improvement-priority">Se voc&ecirc; pudesse melhorar uma &uacute;nica coisa no seu neg&oacute;cio hoje, o que seria? <span class="required-mark">*</span></label>
-            <textarea id="improvement-priority" name="improvementPriority" rows="4" placeholder="Descreva a melhoria mais importante para voc&ecirc;." required></textarea>
+            <textarea id="improvement-priority" name="improvementPriority" rows="4" maxlength="700" placeholder="Descreva de forma objetiva a melhoria mais importante para voc&ecirc;." required></textarea>
             <small class="error" id="improvementPriority-error"></small>
           </div>
 
           <div class="field" data-field="additionalNotes">
             <label for="additional-notes">Observa&ccedil;&otilde;es adicionais</label>
-            <textarea id="additional-notes" name="additionalNotes" rows="4" placeholder="Alguma informa&ccedil;&atilde;o extra que voc&ecirc; queira compartilhar?"></textarea>
+            <textarea id="additional-notes" name="additionalNotes" rows="4" maxlength="700" placeholder="Se necess&aacute;rio, compartilhe uma observa&ccedil;&atilde;o complementar de forma objetiva."></textarea>
+            <small class="error" id="additionalNotes-error"></small>
           </div>
         </section>
 

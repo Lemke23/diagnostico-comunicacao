@@ -257,6 +257,8 @@ input {
 
 .meta-value {
   line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -309,6 +311,8 @@ input {
 
 .detail-value {
   line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -328,6 +332,8 @@ input {
 .analysis-summary {
   margin: 0;
   line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .analysis-section {
@@ -346,6 +352,14 @@ input {
   padding-left: 20px;
   color: var(--text);
   line-height: 1.6;
+}
+
+.analysis-section li,
+.session-email,
+.diagnostic-card h3 {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .technical-toggle {

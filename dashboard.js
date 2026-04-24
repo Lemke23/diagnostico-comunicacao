@@ -530,16 +530,29 @@ function createAnalysisBlock(analysisData) {
   return wrapper;
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatPrintableText(value) {
+  return escapeHtml(value).replace(/\r?\n/g, "<br>");
+}
+
 function buildPrintableReport(diagnostic, analysisData) {
   const sections = buildStructuredSections(diagnostic);
   const sectionsMarkup = sections.map((section) => `
     <section class="report-section">
-      <h3>${section.title}</h3>
+      <h3>${escapeHtml(section.title)}</h3>
       <div class="report-grid">
         ${section.rows.map((row) => `
           <div class="report-item">
-            <strong>${row.label}</strong>
-            <span>${row.value}</span>
+            <strong>${escapeHtml(row.label)}</strong>
+            <span>${formatPrintableText(row.value)}</span>
           </div>
         `).join("")}
       </div>
@@ -551,16 +564,16 @@ function buildPrintableReport(diagnostic, analysisData) {
       <h3>An\u00e1lise r\u00e1pida</h3>
       <div class="report-summary-block">
         <h4>Resumo da empresa</h4>
-        <p>${analysisData.summary}</p>
+        <p>${formatPrintableText(analysisData.summary)}</p>
       </div>
       <h4>Principais canais de venda</h4>
-      <ul>${analysisData.channels.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul>${analysisData.channels.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
       <h4>Pontos fortes identificados</h4>
-      <ul>${analysisData.strengths.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul>${analysisData.strengths.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
       <h4>Gargalos percebidos</h4>
-      <ul>${analysisData.bottlenecks.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul>${analysisData.bottlenecks.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
       <h4>Sugest\u00f5es iniciais de melhoria</h4>
-      <ul>${analysisData.suggestions.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul>${analysisData.suggestions.map((item) => `<li>${formatPrintableText(item)}</li>`).join("")}</ul>
     </section>
   `;
 
@@ -571,7 +584,7 @@ function buildPrintableReport(diagnostic, analysisData) {
     <title>Relat\u00f3rio - ${diagnostic.nome_empresa || "Diagn\u00f3stico"}</title>
     <style>
       * { box-sizing: border-box; }
-      body { font-family: Arial, sans-serif; color: #18233f; margin: 10px 12px; line-height: 1.4; }
+      body { font-family: Arial, sans-serif; color: #18233f; margin: 10px 12px; line-height: 1.4; overflow-wrap: anywhere; }
       h1, h2, h3, h4 { margin: 0 0 8px; }
       h1 { font-size: 24px; line-height: 1.15; }
       h2 { font-size: 14px; color: #51607f; margin-bottom: 0; font-weight: 500; }
@@ -585,6 +598,10 @@ function buildPrintableReport(diagnostic, analysisData) {
       .report-header-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
       .report-header-item { border: 1px solid #d6dceb; border-radius: 8px; padding: 8px 10px; background: #f8faff; }
       .report-header-item strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: #5a6784; margin-bottom: 4px; }
+      .report-header-item span,
+      .report-summary-block p,
+      .report-item span,
+      li { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
       .report-section { margin-top: 12px; }
       .report-section-highlight { margin-top: 0; padding: 10px 12px; border: 1px solid #dce3f5; border-radius: 12px; background: #f7f9ff; }
       .report-summary-block { margin-bottom: 10px; }
@@ -604,20 +621,20 @@ function buildPrintableReport(diagnostic, analysisData) {
   <body>
     <div class="report-intro">
       <header class="report-header">
-        <h1>${diagnostic.nome_empresa || "Diagn\u00f3stico"}</h1>
+        <h1>${escapeHtml(diagnostic.nome_empresa || "Diagn\u00f3stico")}</h1>
         <h2>Relat\u00f3rio de diagn\u00f3stico comercial</h2>
         <div class="report-header-meta">
           <div class="report-header-item">
             <strong>Respons\u00e1vel</strong>
-            <span>${diagnostic.nome_responsavel || "N\u00e3o informado"}</span>
+            <span>${formatPrintableText(diagnostic.nome_responsavel || "N\u00e3o informado")}</span>
           </div>
           <div class="report-header-item">
             <strong>Data</strong>
-            <span>${formatDate(getCreatedAt(diagnostic))}</span>
+            <span>${escapeHtml(formatDate(getCreatedAt(diagnostic)))}</span>
           </div>
           <div class="report-header-item">
             <strong>Canais principais</strong>
-            <span>${analysisData.channels.join(", ")}</span>
+            <span>${formatPrintableText(analysisData.channels.join(", "))}</span>
           </div>
         </div>
       </header>

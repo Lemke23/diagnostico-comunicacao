@@ -216,6 +216,12 @@ form {
   gap: 8px;
 }
 
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
 .field label,
 .field-label {
   font-size: 0.96rem;
@@ -228,6 +234,10 @@ form {
 }
 
 input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
 select,
 textarea {
   width: 100%;
@@ -240,11 +250,19 @@ textarea {
 }
 
 input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+input[type="number"]::placeholder,
 textarea::placeholder {
   color: #8a90a6;
 }
 
 input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
 select:focus,
 textarea:focus {
   outline: none;
@@ -315,6 +333,10 @@ select {
 }
 
 .field.invalid input[type="text"],
+.field.invalid input[type="email"],
+.field.invalid input[type="tel"],
+.field.invalid input[type="url"],
+.field.invalid input[type="number"],
 .field.invalid select,
 .field.invalid textarea,
 .field.invalid .choice-pill {
@@ -440,6 +462,11 @@ select {
 
   .choice-group {
     gap: 8px;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 
   .choice-pill {

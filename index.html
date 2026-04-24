@@ -50,16 +50,73 @@
             <h3>Identifica&ccedil;&atilde;o</h3>
           </div>
 
-          <div class="field" data-field="name">
-            <label for="name">Nome do respons&aacute;vel <span class="required-mark">*</span></label>
-            <input id="name" name="name" type="text" placeholder="Ex.: Maria Silva" required>
-            <small class="error" id="name-error"></small>
+          <div class="field-grid">
+            <div class="field" data-field="name">
+              <label for="name">Nome do respons&aacute;vel <span class="required-mark">*</span></label>
+              <input id="name" name="name" type="text" placeholder="Ex.: Maria Silva" required>
+              <small class="error" id="name-error"></small>
+            </div>
+
+            <div class="field" data-field="company">
+              <label for="company">Nome da empresa <span class="required-mark">*</span></label>
+              <input id="company" name="company" type="text" placeholder="Ex.: Studio Criativo Ltda." required>
+              <small class="error" id="company-error"></small>
+            </div>
           </div>
 
-          <div class="field" data-field="company">
-            <label for="company">Nome da empresa <span class="required-mark">*</span></label>
-            <input id="company" name="company" type="text" placeholder="Ex.: Studio Criativo Ltda." required>
-            <small class="error" id="company-error"></small>
+          <div class="field-grid">
+            <div class="field" data-field="email">
+              <label for="email">E-mail <span class="required-mark">*</span></label>
+              <input id="email" name="email" type="email" placeholder="Ex.: contato@empresa.com" required>
+              <small class="error" id="email-error"></small>
+            </div>
+
+            <div class="field" data-field="phoneWhatsApp">
+              <label for="phone-whatsapp">Telefone / WhatsApp <span class="required-mark">*</span></label>
+              <input id="phone-whatsapp" name="phoneWhatsApp" type="tel" placeholder="Ex.: (11) 99999-9999" required>
+              <small class="error" id="phoneWhatsApp-error"></small>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field" data-field="cityState">
+              <label for="city-state">Cidade e Estado <span class="required-mark">*</span></label>
+              <input id="city-state" name="cityState" type="text" placeholder="Ex.: S&atilde;o Paulo, SP" required>
+              <small class="error" id="cityState-error"></small>
+            </div>
+
+            <div class="field" data-field="role">
+              <label for="role">Cargo/fun&ccedil;&atilde;o do respons&aacute;vel <span class="required-mark">*</span></label>
+              <input id="role" name="role" type="text" placeholder="Ex.: propriet&aacute;rio, gestor comercial, vendedor" required>
+              <small class="error" id="role-error"></small>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field" data-field="mainSocialNetworkName">
+              <label for="main-social-network-name">Nome da rede social principal <span class="required-mark">*</span></label>
+              <input id="main-social-network-name" name="mainSocialNetworkName" type="text" placeholder="Ex.: Instagram, TikTok, Facebook" required>
+              <small class="error" id="mainSocialNetworkName-error"></small>
+            </div>
+
+            <div class="field" data-field="mainSocialNetworkLink">
+              <label for="main-social-network-link">Link da rede social principal <span class="required-mark">*</span></label>
+              <input id="main-social-network-link" name="mainSocialNetworkLink" type="url" placeholder="Ex.: https://instagram.com/seuperfil" required>
+              <small class="error" id="mainSocialNetworkLink-error"></small>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="website">Site da empresa, se houver</label>
+              <input id="website" name="website" type="url" placeholder="Ex.: https://suaempresa.com.br">
+            </div>
+
+            <div class="field" data-field="salesTeamSize">
+              <label for="sales-team-size">Quantidade de pessoas na equipe de vendas <span class="required-mark">*</span></label>
+              <input id="sales-team-size" name="salesTeamSize" type="number" min="1" step="1" placeholder="Ex.: 3" required>
+              <small class="error" id="salesTeamSize-error"></small>
+            </div>
           </div>
 
           <div class="field" data-field="businessType">

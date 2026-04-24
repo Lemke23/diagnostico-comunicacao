@@ -21,6 +21,51 @@ const fields = [
     step: "identificacao"
   },
   {
+    id: "email",
+    type: "input",
+    message: "Informe um e-mail v\u00e1lido.",
+    step: "identificacao",
+    validator: (element) => element.validity.valid
+  },
+  {
+    id: "phoneWhatsApp",
+    type: "input",
+    message: "Informe o telefone ou WhatsApp.",
+    step: "identificacao"
+  },
+  {
+    id: "cityState",
+    type: "input",
+    message: "Informe a cidade e o estado.",
+    step: "identificacao"
+  },
+  {
+    id: "mainSocialNetworkName",
+    type: "input",
+    message: "Informe a rede social principal.",
+    step: "identificacao"
+  },
+  {
+    id: "mainSocialNetworkLink",
+    type: "input",
+    message: "Informe um link v\u00e1lido da rede social principal.",
+    step: "identificacao",
+    validator: (element) => element.validity.valid
+  },
+  {
+    id: "role",
+    type: "input",
+    message: "Informe o cargo ou fun\u00e7\u00e3o do respons\u00e1vel.",
+    step: "identificacao"
+  },
+  {
+    id: "salesTeamSize",
+    type: "input",
+    message: "Informe a quantidade de pessoas na equipe de vendas.",
+    step: "identificacao",
+    validator: (element) => element.validity.valid && Number(element.value) >= 1
+  },
+  {
     id: "businessType",
     type: "radio",
     message: "Selecione como voc\u00ea considera o neg\u00f3cio hoje.",
@@ -128,7 +173,20 @@ function isFieldComplete(field) {
   }
 
   const [element] = elements;
-  return Boolean(element && element.value.trim());
+  if (!element) {
+    return false;
+  }
+
+  const hasValue = Boolean(element.value.trim());
+  if (!hasValue) {
+    return false;
+  }
+
+  if (field.validator) {
+    return field.validator(element);
+  }
+
+  return true;
 }
 
 function setError(field, message) {
@@ -207,7 +265,26 @@ function getErrorMessage(payload, fallbackMessage) {
 }
 
 function validateField(field) {
-  if (!isFieldComplete(field)) {
+  const elements = getFieldElements(field);
+
+  if (field.type === "radio") {
+    if (!isFieldComplete(field)) {
+      setError(field, field.message);
+      return false;
+    }
+
+    clearError(field);
+    return true;
+  }
+
+  const [element] = elements;
+
+  if (!element || !element.value.trim()) {
+    setError(field, field.message);
+    return false;
+  }
+
+  if (field.validator && !field.validator(element)) {
     setError(field, field.message);
     return false;
   }

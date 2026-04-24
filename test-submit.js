@@ -278,15 +278,34 @@ async function enviarDiagnostico(dados) {
 
 async function rodarTestes() {
   console.log("Iniciando envio de diagnósticos de teste...");
+  const resultados = [];
+  let sucesso = 0;
+  let falhas = 0;
 
   for (const diagnostico of diagnosticosTeste) {
     try {
       const response = await enviarDiagnostico(diagnostico.payload);
+      sucesso += 1;
+      resultados.push({
+        id: diagnostico.id,
+        empresa: diagnostico.payload.nome_empresa,
+        status: response.status,
+        sucesso: true
+      });
+
       console.log(`Sucesso: ${diagnostico.titulo}`, {
         status: response.status,
         empresa: diagnostico.payload.nome_empresa
       });
     } catch (error) {
+      falhas += 1;
+      resultados.push({
+        id: diagnostico.id,
+        empresa: diagnostico.payload.nome_empresa,
+        sucesso: false,
+        erro: error instanceof Error ? error.message : String(error)
+      });
+
       console.error(`Erro ao enviar ${diagnostico.titulo}`, {
         empresa: diagnostico.payload.nome_empresa,
         erro: error instanceof Error ? error.message : error
@@ -295,6 +314,12 @@ async function rodarTestes() {
   }
 
   console.log("Execução de testes concluída.");
+  return {
+    total: diagnosticosTeste.length,
+    sucesso,
+    falhas,
+    resultados
+  };
 }
 
 const diagnosticSubmitTest = {

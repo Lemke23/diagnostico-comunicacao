@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagn&oacute;stico de Comunica&ccedil;&atilde;o e Atendimento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>Diagn&oacute;stico de Comunica&ccedil;&atilde;o e Atendimento</h1>
+      <p class="hero-subtitle">
+        Formul&aacute;rio para an&aacute;lise da comunica&ccedil;&atilde;o digital, atendimento e organiza&ccedil;&atilde;o do neg&oacute;cio.
+      </p>
+      <p class="hero-description">
+        Este question&aacute;rio foi desenvolvido para compreender melhor o funcionamento atual da empresa, identificando oportunidades de melhoria na comunica&ccedil;&atilde;o, no atendimento e na organiza&ccedil;&atilde;o da presen&ccedil;a digital.
+      </p>
+    </section>
+
+    <section class="form-shell">
+      <div class="progress-panel">
+        <div class="progress-header">
+          <span class="progress-label">PROGRESSO</span>
+          <span class="progress-value" id="progress-value">0%</span>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <span class="progress-fill" id="progress-fill"></span>
+        </div>
+
+        <div class="step-tabs" aria-label="Etapas do diagn&oacute;stico">
+          <button class="step-tab is-active" type="button" data-step-target="identificacao">Identifica&ccedil;&atilde;o</button>
+          <button class="step-tab" type="button" data-step-target="instagram">Instagram e comunica&ccedil;&atilde;o digital</button>
+          <button class="step-tab" type="button" data-step-target="atendimento">Atendimento</button>
+          <button class="step-tab" type="button" data-step-target="vendas">Vendas e organiza&ccedil;&atilde;o</button>
+        </div>
+      </div>
+
+      <form id="diagnostic-form" action="https://formspree.io/f/xeevvlea" method="POST" novalidate>
+        <div class="form-header">
+          <h2>Responda o diagn&oacute;stico</h2>
+        </div>
+
+        <section class="form-section" id="identificacao" data-step="identificacao">
+          <div class="section-title">
+            <span class="section-number">1</span>
+            <h3>Identifica&ccedil;&atilde;o</h3>
+          </div>
+
+          <div class="field" data-field="name">
+            <label for="name">Nome do respons&aacute;vel <span class="required-mark">*</span></label>
+            <input id="name" name="name" type="text" placeholder="Ex.: Maria Silva" required>
+            <small class="error" id="name-error"></small>
+          </div>
+
+          <div class="field" data-field="company">
+            <label for="company">Nome da empresa <span class="required-mark">*</span></label>
+            <input id="company" name="company" type="text" placeholder="Ex.: Studio Criativo Ltda." required>
+            <small class="error" id="company-error"></small>
+          </div>
+
+          <div class="field" data-field="businessType">
+            <span class="field-label">Hoje voc&ecirc; considera seu neg&oacute;cio mais como: <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="business-type-personal">
+                <input id="business-type-personal" name="businessType" type="radio" value="Marca pessoal" required>
+                <span>Marca pessoal</span>
+              </label>
+              <label class="choice-pill" for="business-type-company">
+                <input id="business-type-company" name="businessType" type="radio" value="Empresa" required>
+                <span>Empresa</span>
+              </label>
+              <label class="choice-pill" for="business-type-both">
+                <input id="business-type-both" name="businessType" type="radio" value="Os dois misturados" required>
+                <span>Os dois misturados</span>
+              </label>
+            </div>
+            <small class="error" id="businessType-error"></small>
+          </div>
+        </section>
+
+        <section class="form-section" id="instagram" data-step="instagram">
+          <div class="section-title">
+            <span class="section-number">2</span>
+            <h3>Instagram e comunica&ccedil;&atilde;o digital</h3>
+          </div>
+
+          <div class="field" data-field="topProducts">
+            <label for="top-products">Quais produtos voc&ecirc; mais vende atualmente? <span class="required-mark">*</span></label>
+            <textarea id="top-products" name="topProducts" rows="4" placeholder="Liste os principais produtos ou servi&ccedil;os." required></textarea>
+            <small class="error" id="topProducts-error"></small>
+          </div>
+
+          <div class="field" data-field="salesChannel">
+            <label for="sales-channel">Seu principal canal de vendas hoje &eacute;: <span class="required-mark">*</span></label>
+            <div class="select-wrap">
+              <select id="sales-channel" name="salesChannel" required>
+                <option value="">Selecione uma op&ccedil;&atilde;o</option>
+                <option value="Instagram">Instagram</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Indica&ccedil;&atilde;o">Indica&ccedil;&atilde;o</option>
+                <option value="Loja f&iacute;sica">Loja f&iacute;sica</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <small class="error" id="salesChannel-error"></small>
+          </div>
+
+          <div class="field" data-field="instagramUse">
+            <span class="field-label">O Instagram hoje &eacute; usado mais para: <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="instagram-use-sell">
+                <input id="instagram-use-sell" name="instagramUse" type="radio" value="Vender" required>
+                <span>Vender</span>
+              </label>
+              <label class="choice-pill" for="instagram-use-routine">
+                <input id="instagram-use-routine" name="instagramUse" type="radio" value="Mostrar rotina" required>
+                <span>Mostrar rotina</span>
+              </label>
+              <label class="choice-pill" for="instagram-use-both">
+                <input id="instagram-use-both" name="instagramUse" type="radio" value="Os dois" required>
+                <span>Os dois</span>
+              </label>
+            </div>
+            <small class="error" id="instagramUse-error"></small>
+          </div>
+
+          <div class="field" data-field="profileClarity">
+            <span class="field-label">Voc&ecirc; acha que quem entra no seu perfil entende claramente o que voc&ecirc; vende? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="profile-clear-yes">
+                <input id="profile-clear-yes" name="profileClarity" type="radio" value="Sim" required>
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="profile-clear-no">
+                <input id="profile-clear-no" name="profileClarity" type="radio" value="N&atilde;o" required>
+                <span>N&atilde;o</span>
+              </label>
+              <label class="choice-pill" for="profile-clear-maybe">
+                <input id="profile-clear-maybe" name="profileClarity" type="radio" value="Mais ou menos" required>
+                <span>Mais ou menos</span>
+              </label>
+            </div>
+            <small class="error" id="profileClarity-error"></small>
+          </div>
+
+          <div class="field" data-field="separateProfile">
+            <span class="field-label">Voc&ecirc; j&aacute; pensou em separar o perfil pessoal do profissional? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="separate-profile-yes">
+                <input id="separate-profile-yes" name="separateProfile" type="radio" value="Sim" required>
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="separate-profile-no">
+                <input id="separate-profile-no" name="separateProfile" type="radio" value="N&atilde;o" required>
+                <span>N&atilde;o</span>
+              </label>
+            </div>
+            <small class="error" id="separateProfile-error"></small>
+          </div>
+        </section>
+
+        <section class="form-section" id="atendimento" data-step="atendimento">
+          <div class="section-title">
+            <span class="section-number">3</span>
+            <h3>Atendimento</h3>
+          </div>
+
+          <div class="field" data-field="responder">
+            <span class="field-label">Quando um cliente entra em contato, quem responde normalmente? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="responder-self">
+                <input id="responder-self" name="responder" type="radio" value="Eu mesmo" required>
+                <span>Eu mesmo</span>
+              </label>
+              <label class="choice-pill" for="responder-team">
+                <input id="responder-team" name="responder" type="radio" value="Equipe" required>
+                <span>Equipe</span>
+              </label>
+              <label class="choice-pill" for="responder-both">
+                <input id="responder-both" name="responder" type="radio" value="Os dois" required>
+                <span>Os dois</span>
+              </label>
+            </div>
+            <small class="error" id="responder-error"></small>
+          </div>
+
+          <div class="field" data-field="servicePattern">
+            <span class="field-label">Existe um padr&atilde;o de atendimento? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="service-pattern-yes">
+                <input id="service-pattern-yes" name="servicePattern" type="radio" value="Sim" required>
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="service-pattern-no">
+                <input id="service-pattern-no" name="servicePattern" type="radio" value="N&atilde;o" required>
+                <span>N&atilde;o</span>
+              </label>
+              <label class="choice-pill" for="service-pattern-partial">
+                <input id="service-pattern-partial" name="servicePattern" type="radio" value="Parcialmente" required>
+                <span>Parcialmente</span>
+              </label>
+            </div>
+            <small class="error" id="servicePattern-error"></small>
+          </div>
+
+          <div class="field" data-field="customerQuestions">
+            <label for="customer-questions">Quais s&atilde;o as 3 d&uacute;vidas que os clientes mais fazem? <span class="required-mark">*</span></label>
+            <textarea id="customer-questions" name="customerQuestions" rows="4" placeholder="Ex.: 1) Qual o prazo? 2) Qual o valor? 3) Como funciona a entrega?" required></textarea>
+            <small class="error" id="customerQuestions-error"></small>
+          </div>
+
+          <div class="field" data-field="productUnderstanding">
+            <span class="field-label">O cliente geralmente entende f&aacute;cil o produto? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="product-understanding-yes">
+                <input id="product-understanding-yes" name="productUnderstanding" type="radio" value="Sim" required>
+                <span>Sim</span>
+              </label>
+              <label class="choice-pill" for="product-understanding-no">
+                <input id="product-understanding-no" name="productUnderstanding" type="radio" value="N&atilde;o" required>
+                <span>N&atilde;o</span>
+              </label>
+              <label class="choice-pill" for="product-understanding-depends">
+                <input id="product-understanding-depends" name="productUnderstanding" type="radio" value="Depende" required>
+                <span>Depende</span>
+              </label>
+            </div>
+            <small class="error" id="productUnderstanding-error"></small>
+          </div>
+        </section>
+
+        <section class="form-section" id="vendas" data-step="vendas">
+          <div class="section-title">
+            <span class="section-number">4</span>
+            <h3>Vendas e organiza&ccedil;&atilde;o</h3>
+          </div>
+
+          <div class="field" data-field="salesDifficulty">
+            <label for="sales-difficulty">O que mais dificulta fechar uma venda hoje? <span class="required-mark">*</span></label>
+            <textarea id="sales-difficulty" name="salesDifficulty" rows="4" placeholder="Compartilhe os principais obst&aacute;culos no fechamento." required></textarea>
+            <small class="error" id="salesDifficulty-error"></small>
+          </div>
+
+          <div class="field" data-field="mainProblem">
+            <span class="field-label">Hoje, qual &eacute; o maior problema do seu neg&oacute;cio? <span class="required-mark">*</span></span>
+            <div class="choice-group">
+              <label class="choice-pill" for="main-problem-organization">
+                <input id="main-problem-organization" name="mainProblem" type="radio" value="Falta de organiza&ccedil;&atilde;o" required>
+                <span>Falta de organiza&ccedil;&atilde;o</span>
+              </label>
+              <label class="choice-pill" for="main-problem-communication">
+                <input id="main-problem-communication" name="mainProblem" type="radio" value="Falta de comunica&ccedil;&atilde;o clara" required>
+                <span>Falta de comunica&ccedil;&atilde;o clara</span>
+              </label>
+              <label class="choice-pill" for="main-problem-clients">
+                <input id="main-problem-clients" name="mainProblem" type="radio" value="Falta de clientes" required>
+                <span>Falta de clientes</span>
+              </label>
+              <label class="choice-pill" for="main-problem-other">
+                <input id="main-problem-other" name="mainProblem" type="radio" value="Outro" required>
+                <span>Outro</span>
+              </label>
+            </div>
+            <small class="error" id="mainProblem-error"></small>
+          </div>
+
+          <div class="field" data-field="improvementPriority">
+            <label for="improvement-priority">Se voc&ecirc; pudesse melhorar uma &uacute;nica coisa no seu neg&oacute;cio hoje, o que seria? <span class="required-mark">*</span></label>
+            <textarea id="improvement-priority" name="improvementPriority" rows="4" placeholder="Descreva a melhoria mais importante para voc&ecirc;." required></textarea>
+            <small class="error" id="improvementPriority-error"></small>
+          </div>
+
+          <div class="field" data-field="additionalNotes">
+            <label for="additional-notes">Observa&ccedil;&otilde;es adicionais</label>
+            <textarea id="additional-notes" name="additionalNotes" rows="4" placeholder="Alguma informa&ccedil;&atilde;o extra que voc&ecirc; queira compartilhar?"></textarea>
+          </div>
+        </section>
+
+        <input type="hidden" name="_subject" value="Novo diagn&oacute;stico recebido">
+        <input type="hidden" name="_captcha" value="false">
+
+        <div class="form-footer">
+          <div class="form-actions">
+            <button type="reset" class="button button-secondary">Limpar respostas</button>
+            <button type="submit" class="button button-primary">Enviar diagn&oacute;stico</button>
+          </div>
+          <p class="required-note"><span class="required-mark">*</span> Campos obrigat&oacute;rios</p>
+          <p class="success" id="success-message" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

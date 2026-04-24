@@ -5,9 +5,6 @@ const progressFill = document.getElementById("progress-fill");
 const stepTabs = Array.from(document.querySelectorAll(".step-tab"));
 const sections = Array.from(document.querySelectorAll(".form-section"));
 const submitButtons = Array.from(form.querySelectorAll("button"));
-const testTools = document.getElementById("test-tools");
-const testButton = document.getElementById("generate-test-data-button");
-const testSubmitMessage = document.getElementById("test-submit-message");
 const SUPABASE_URL = "https://apqevpormksrrdcpdwgt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_nZRdfhGhLtsqMPMjoot4_A_2WbTcESy";
 
@@ -749,88 +746,6 @@ function setStatus(message = "", type = "success") {
   }
 }
 
-function setTestStatus(message = "", type = "success") {
-  if (!testSubmitMessage) {
-    return;
-  }
-
-  testSubmitMessage.classList.remove("visible", "is-loading", "is-error");
-  testSubmitMessage.textContent = message;
-
-  if (!message) {
-    return;
-  }
-
-  testSubmitMessage.classList.add("visible");
-
-  if (type === "loading") {
-    testSubmitMessage.classList.add("is-loading");
-  }
-
-  if (type === "error") {
-    testSubmitMessage.classList.add("is-error");
-  }
-}
-
-function isLocalEnvironment() {
-  const { protocol, hostname } = window.location;
-  return protocol === "file:" || hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-}
-
-function shouldShowTestTools() {
-  const params = new URLSearchParams(window.location.search);
-  return isLocalEnvironment() || params.get("teste") === "true";
-}
-
-function validateTestScriptAvailability() {
-  if (window.diagnosticSubmitTest) {
-    console.log("Script de testes carregado");
-  }
-
-  if (typeof window.rodarTestes === "function") {
-    console.log("Função rodarTestes disponível");
-  }
-}
-
-function setupTestTools() {
-  if (!testTools || !testButton) {
-    return;
-  }
-
-  if (!shouldShowTestTools()) {
-    testTools.hidden = true;
-    return;
-  }
-
-  testTools.hidden = false;
-
-  testButton.addEventListener("click", async () => {
-    if (typeof window.rodarTestes !== "function") {
-      setTestStatus("A função de testes não está disponível nesta página.", "error");
-      return;
-    }
-
-    testButton.disabled = true;
-    setTestStatus("Gerando dados de teste...", "loading");
-
-    try {
-      const resultado = await window.rodarTestes();
-
-      if (resultado?.falhas > 0) {
-        setTestStatus(`Os testes terminaram com ${resultado.falhas} falha(s). Confira o console para ver os detalhes.`, "error");
-        return;
-      }
-
-      setTestStatus("Dados de teste enviados com sucesso. Agora você já pode conferir o dashboard.");
-    } catch (error) {
-      console.error("Erro ao executar os testes manuais", error);
-      setTestStatus("Erro ao gerar os dados de teste. Confira o console para mais detalhes.", "error");
-    } finally {
-      testButton.disabled = false;
-    }
-  });
-}
-
 function getFieldSingleValue(name) {
   const elements = Array.from(form.querySelectorAll(`[name="${name}"]`));
 
@@ -1130,5 +1045,3 @@ syncConditionalBlocks();
 initCharacterCounters();
 updateProgress();
 setActiveStep(stepOrder[0]);
-setupTestTools();
-window.addEventListener("load", validateTestScriptAvailability, { once: true });

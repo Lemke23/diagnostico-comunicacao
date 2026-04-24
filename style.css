@@ -432,17 +432,6 @@ select {
   padding-top: 10px;
 }
 
-.test-tools {
-  display: grid;
-  gap: 8px;
-  justify-items: end;
-}
-
-.button-test {
-  padding: 10px 14px;
-  font-size: 0.88rem;
-}
-
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -584,9 +573,5 @@ select {
 
   .required-note {
     text-align: left;
-  }
-
-  .test-tools {
-    justify-items: stretch;
   }
 }

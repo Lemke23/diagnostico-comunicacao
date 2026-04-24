@@ -108,10 +108,11 @@ const fields = [
   },
   {
     id: "instagramObjective",
-    type: "radio",
-    message: "Selecione o objetivo principal do Instagram.",
+    type: "checkbox-group",
+    message: "Selecione pelo menos um objetivo do Instagram.",
     step: "instagram",
-    visible: visibleWhenChannel("Instagram")
+    visible: visibleWhenChannel("Instagram"),
+    minSelections: 1
   },
   {
     id: "instagramProfileClarity",

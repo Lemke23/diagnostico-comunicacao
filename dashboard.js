@@ -1099,8 +1099,9 @@ function createDiagnosticCard(diagnostic) {
 
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
-  deleteButton.className = "details-button details-button-danger";
+  deleteButton.className = "details-button details-button-danger btn-excluir";
   deleteButton.textContent = "Excluir";
+  deleteButton.dataset.diagnosticId = String(diagnostic.id || "");
 
   actionGroup.append(detailsButton, analysisButton, pdfButton, deleteButton);
   header.append(headerText, actionGroup);
@@ -1264,6 +1265,39 @@ function createDiagnosticCard(diagnostic) {
     applySearch();
   });
 
+  const deleteButtonSafe = deleteButton.cloneNode(true);
+  deleteButton.replaceWith(deleteButtonSafe);
+
+  deleteButtonSafe.addEventListener("click", async () => {
+    if (!diagnostic.id) {
+      setFeedback(dashboardFeedback, "Erro ao excluir diagnóstico", "error");
+      return;
+    }
+
+    const confirmed = window.confirm("Tem certeza que deseja excluir este diagnóstico? Esta ação não pode ser desfeita.");
+
+    if (!confirmed) {
+      return;
+    }
+
+    const originalLabel = deleteButtonSafe.textContent;
+    deleteButtonSafe.disabled = true;
+    deleteButtonSafe.textContent = "Excluindo...";
+    setFeedback(dashboardFeedback, "Excluindo diagnóstico...");
+
+    try {
+      await excluirDiagnostico(diagnostic.id);
+      diagnostics = diagnostics.filter((item) => item.id !== diagnostic.id);
+      setFeedback(dashboardFeedback, "Diagnóstico excluído com sucesso.", "success");
+      applySearch();
+    } catch (error) {
+      console.error("Erro ao excluir diagnóstico", error);
+      setFeedback(dashboardFeedback, "Erro ao excluir diagnóstico", "error");
+      deleteButtonSafe.disabled = false;
+      deleteButtonSafe.textContent = originalLabel;
+    }
+  });
+
   technicalToggle.addEventListener("click", () => {
     const isHidden = technicalPanel.classList.toggle("is-hidden");
     technicalToggle.textContent = isHidden ? "Ver JSON t\u00e9cnico" : "Ocultar JSON t\u00e9cnico";
@@ -1289,6 +1323,34 @@ function renderDiagnostics(items) {
     fragment.append(createDiagnosticCard(diagnostic));
   });
   diagnosticsList.append(fragment);
+}
+
+async function excluirDiagnostico(id) {
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  if (!session?.user || !session.access_token) {
+    throw new Error("Usuário não autenticado para exclusão.");
+  }
+
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/diagnosticos?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${session.access_token}`
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Erro ao excluir diagnostico", {
+      status: response.status,
+      body: errorText
+    });
+    throw new Error(errorText || `HTTP ${response.status}`);
+  }
 }
 
 function applySearch() {

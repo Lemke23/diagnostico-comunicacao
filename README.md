@@ -41,6 +41,22 @@ Exemplo de comportamento esperado da policy:
 - usu&aacute;rio an&ocirc;nimo: n&atilde;o pode ler
 - usu&aacute;rio autenticado: pode ler
 
+### Liberar DELETE para usu&aacute;rios autenticados
+
+Use o SQL abaixo no Supabase para permitir exclus&atilde;o apenas para usu&aacute;rios autenticados:
+
+```sql
+drop policy if exists "permitir_delete_autenticado" on public.diagnosticos;
+
+create policy "permitir_delete_autenticado"
+on public.diagnosticos
+for delete
+to authenticated
+using (true);
+
+grant delete on table public.diagnosticos to authenticated;
+```
+
 ## Integra&ccedil;&atilde;o com IA no Netlify
 
 O dashboard chama a fun&ccedil;&atilde;o `/.netlify/functions/analisar-diagnostico`, que usa a OpenAI no backend. A chave da OpenAI n&atilde;o fica no frontend.

@@ -150,6 +150,16 @@ input {
   border-color: var(--border);
 }
 
+.details-button-danger {
+  color: #8f1d2c;
+  background: #fff6f7;
+  border-color: #f0c7ce;
+}
+
+.details-button-danger:hover {
+  border-color: #d37b88;
+}
+
 .primary-button:hover,
 .secondary-button:hover,
 .details-button:hover {

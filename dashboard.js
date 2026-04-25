@@ -1097,7 +1097,12 @@ function createDiagnosticCard(diagnostic) {
   pdfButton.className = "details-button";
   pdfButton.textContent = "Baixar PDF";
 
-  actionGroup.append(detailsButton, analysisButton, pdfButton);
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "details-button details-button-danger";
+  deleteButton.textContent = "Excluir";
+
+  actionGroup.append(detailsButton, analysisButton, pdfButton, deleteButton);
   header.append(headerText, actionGroup);
 
   const metaGrid = document.createElement("div");
@@ -1213,6 +1218,50 @@ function createDiagnosticCard(diagnostic) {
   pdfButton.addEventListener("click", () => {
     const analysisData = cachedAIAnalysis || ensureLocalAnalysis();
     openPrintWindow(diagnostic, analysisData);
+  });
+
+  deleteButton.addEventListener("click", async () => {
+    if (!diagnostic.id) {
+      setFeedback(dashboardFeedback, "Não foi possível excluir o diagnóstico.", "error");
+      return;
+    }
+
+    const confirmed = window.confirm("Tem certeza que deseja excluir este diagnóstico? Esta ação não pode ser desfeita.");
+
+    if (!confirmed) {
+      return;
+    }
+
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      setFeedback(dashboardFeedback, "Não foi possível excluir o diagnóstico.", "error");
+      return;
+    }
+
+    const originalLabel = deleteButton.textContent;
+    deleteButton.disabled = true;
+    deleteButton.textContent = "Excluindo...";
+    setFeedback(dashboardFeedback, "Excluindo diagnóstico...");
+
+    const { error } = await supabase
+      .from("diagnosticos")
+      .delete()
+      .eq("id", diagnostic.id);
+
+    if (error) {
+      console.error("Erro ao excluir diagnóstico", error);
+      setFeedback(dashboardFeedback, "Não foi possível excluir o diagnóstico.", "error");
+      deleteButton.disabled = false;
+      deleteButton.textContent = originalLabel;
+      return;
+    }
+
+    diagnostics = diagnostics.filter((item) => item.id !== diagnostic.id);
+    setFeedback(dashboardFeedback, "Diagnóstico excluído com sucesso.", "success");
+    applySearch();
   });
 
   technicalToggle.addEventListener("click", () => {
